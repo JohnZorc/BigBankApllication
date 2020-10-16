@@ -31,8 +31,16 @@ public class BigBankApplication {
 	}
 
 	@PostMapping("/MortgageCalculator")
-	public String MortgageCalculator(@RequestBody String MortCalc) {
-		return MortCalc; //TODO: Change return value to double and input data into your function
+	public String MortgageCalculator(@RequestBody String MortCalc) throws Exception {
+		final JSONObject obj = new JSONObject(MortCalc);
+
+		// Get all values form request body.
+		double homePrice = obj.getDouble("homePrice");
+		double downPaymentAsPercent = obj.getDouble("downPaymentAsPercent");
+		int loanLength = obj.getInt("loanLength");
+		double interestRate = obj.getDouble("interestRate");
+
+		return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate); //TODO: Change return value to double and input data into your function
 	}
 
 	@PostMapping("/CCMinCalculator")
