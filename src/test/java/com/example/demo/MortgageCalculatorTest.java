@@ -66,8 +66,10 @@ class MortgageCalculatorTest {
 
     @Test
     void testMortgageCalculatesCorrectly() throws Exception {
-        assertEquals(1,
-                MortgageCalculator.calculate(250000.00,9.4,20,4.5)
+        String expected = "{\"monthlyPayment\":\"$1,005.21\",\"amountPaidInInterest\":\"$12,500.00\",\"amountPainInPrinciple\":\"$228,750.00\",\"totalAmountPaid\":\"$241,250.00\"}";
+
+        assertEquals(expected,
+                MortgageCalculator.calculate(250000.00,8.5,20,5.00)
         );
     }
 }

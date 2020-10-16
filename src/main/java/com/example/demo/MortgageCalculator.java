@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import org.json.JSONObject;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -19,7 +21,7 @@ public class MortgageCalculator {
     //  total amount paid
 
 
-    public static int calculate(double homePrice, double downPaymentAsPercent, int loanLength, double interestRate) throws Exception {
+    public static String calculate(double homePrice, double downPaymentAsPercent, int loanLength, double interestRate) throws Exception {
 
         // Check inputs are valid
         if(homePrice <= 0){
@@ -48,13 +50,14 @@ public class MortgageCalculator {
         Locale locality = new Locale("en", "US");
         NumberFormat numberFormatter = NumberFormat.getCurrencyInstance(locality);
 
-        System.out.printf("Monthly Mortgage Payment: %s\n", numberFormatter.format(monthlyPayment));
-        System.out.printf("Amount paid in principle: %s\n", numberFormatter.format(amountPainInPrinciple));
-        System.out.printf("Amount paid in interest: %s\n", numberFormatter.format(amountPaidInInterest));
-        System.out.printf("Total amount paid: %s\n", numberFormatter.format(totalAmountPaid));
-        System.out.println();
+        // Create JSON to return and populate it.
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put("monthlyPayment", numberFormatter.format(monthlyPayment));
+        jsonObject.put("amountPainInPrinciple", numberFormatter.format(amountPainInPrinciple));
+        jsonObject.put("amountPaidInInterest", numberFormatter.format(amountPaidInInterest));
+        jsonObject.put("totalAmountPaid", numberFormatter.format(totalAmountPaid));
 
-        return 1;
+        return jsonObject.toString();
     }
 
 
