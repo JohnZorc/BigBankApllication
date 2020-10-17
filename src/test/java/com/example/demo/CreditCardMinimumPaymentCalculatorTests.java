@@ -3,38 +3,55 @@ package com.example.demo;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class CreditCardMinimumPaymentCalculatorTests
 {
+
     @Test
-    public void testAllValidOutputs() {
-        assertEquals(112.50, CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(75, 1, 3),
-                "Tests for valid outputs and output formatting");
+    void testAllValidInputs() throws Exception {
+        String expected = "{\"months\":50,\"monthlyPayment\":\"2.25\",\"totalAmountPaid\":\"112.50\"}";
+
+        assertEquals(expected,
+                CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(75, 1, 3)
+        );
+    }
+
+
+    @Test
+    void testInvalidCCBalance() {
+
+        Exception exception = assertThrows( Exception.class, () ->
+                CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(0, 10, 3)
+        );
+        assertEquals("Invalid input, please input only positive numbers.", exception.getMessage());
     }
 
     @Test
-    public void testInvalidCCBalance() {
-        assertEquals(-1, CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(0, 10, 3),
-                "Tests invalid non-positive CCBalance");
+    void testInvalidCCInterestRate() {
+
+        Exception exception = assertThrows( Exception.class, () ->
+                CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(1000, -10, 3)
+        );
+        assertEquals("Invalid input, please input only positive numbers.", exception.getMessage());
     }
 
     @Test
-    public void testInvalidCCInterestRate() {
-        assertEquals(-1, CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(1000, -10, 3),
-                "Tests invalid non-positive CCInterestRate");
+    void testInvalidMinPaymentPercentage() {
+
+        Exception exception = assertThrows( Exception.class, () ->
+                CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(1000, 10, -1)
+        );
+        assertEquals("Invalid input, please input only positive numbers.", exception.getMessage());
     }
 
     @Test
-    public void testInvalidMinPaymentPercentage() {
-        assertEquals(-1, CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(1000, 10, -1),
-                "Tests invalid non-positive Minimum Payment Percentage");
-    }
+    void testMinimumPaymentTooLow() {
 
-    @Test
-    public void testMinimumPaymentTooLow() {
-        //If the Minimum Payment is too low, the balance would never be paid off
-        assertEquals(-1, CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(10, 10, 2),
-                "Tests if it is possible to pay off the debt with the current minimum payment");
+        Exception exception = assertThrows( Exception.class, () ->
+                CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(10, 10, 2)
+        );
+        assertEquals("Payment cannot be completed; minimumPaymentPercentage is too low", exception.getMessage());
     }
 }
