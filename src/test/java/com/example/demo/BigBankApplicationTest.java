@@ -46,7 +46,23 @@ class BigBankApplicationTest {
     }
 
     @Test
-    void creditCardMinCalculator() {
+    void testCreditCardMinCalculator() throws Exception
+    {
+        final JSONObject obj = new JSONObject();
+        obj.put("CCBalance", 75);
+        obj.put("CCInterestRate", 1);
+        obj.put("minimumPaymentPercentage", 3);
+
+        // Expected response:
+        String response = CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(75, 1, 3);
+
+        mvc.perform(post("/CCMinCalculator")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(obj.toString())
+                .characterEncoding("utf-8"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(response)))
+                .andReturn();
     }
 
     @Test
