@@ -21,7 +21,24 @@ class BigBankApplicationTest {
 
 
     @Test
-    void simpleSavings() {
+    void simpleSavings() throws Exception {
+        final JSONObject obj = new JSONObject();
+        obj.put("deposit", 100.00);
+        obj.put("monthly", 10.0);
+        obj.put("yearPeriods", 3.00);
+        obj.put("interestRate", 10.00);
+
+        final JSONObject responseObj = SimpleSavingsCalculator.SSCalculator(100.00, 10.00, 3.00, 10.00);
+        String responseString = responseObj.toString();
+
+        mvc.perform(post("/SimpleSavings")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(obj.toString())
+                .characterEncoding("utf-8"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(responseString)))
+                .andReturn();
+
     }
 
     @Test
