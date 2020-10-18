@@ -44,8 +44,15 @@ public class BigBankApplication {
 	}
 
 	@PostMapping("/CCMinCalculator")
-	public String CreditCardMinCalculator(@RequestBody String CreditMin) {
-		return CreditMin; //TODO: Change return value to double and input data into your function
+	public String CreditCardMinCalculator(@RequestBody String CreditMin) throws Exception {
+
+		final JSONObject obj = new JSONObject(CreditMin);
+
+		double CCBalance = obj.getDouble("CCBalance");
+		double CCInterestRate = obj.getDouble("CCInterestRate");
+		double minimumPaymentPercentage = obj.getDouble("minimumPaymentPercentage");
+
+		return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance, CCInterestRate, minimumPaymentPercentage);
 	}
 
 	@PostMapping("/CCPayoffCalculator")
