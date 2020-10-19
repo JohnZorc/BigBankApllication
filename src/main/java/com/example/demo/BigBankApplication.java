@@ -56,7 +56,19 @@ public class BigBankApplication {
 	}
 
 	@PostMapping("/CCPayoffCalculator")
-	public String CCPayoffCalculator(@RequestBody String CreditMin) {
-		return CreditMin; //TODO: Change return value to double and input data into your function
+	public String CCPayoffCalculator(@RequestBody String CreditPayoff) {
+		final JSONObject obj = new JSONObject(CreditPayoff);
+
+		//Get all of the values via the keys
+		double ccBalance = obj.getDouble("CCBalance");
+		double ccInterest = obj.getDouble("CCInterest");
+		int months = obj.getInt("Months");
+
+		//Get your JSON object of values from the SSCalculator class
+		final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
+
+		String returnString = testObject.toString();
+		return returnString;
+
 	}
 }

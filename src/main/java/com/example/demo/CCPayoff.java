@@ -1,38 +1,28 @@
 package com.example.demo;
 
+import org.json.JSONObject;
+
 import java.text.DecimalFormat;
 
 public class CCPayoff {
-	
-	/*
-	 * Inputs:
-	 * -CC balance
-	 * -CC interest rate
-	 * -desired months to payoff
-	 */
-	
-	/*
-	 * Outputs:
-	 * -monthly payment
-	 * -total principle paid
-	 * -total interest paid
-	 */
 
-	public static String printPayOff(double ccBalance, double ccInterest, int months) {
-		String response="";
+	public static JSONObject printPayOff(double ccBalance, double ccInterest, int months) {
+		final JSONObject returnObject = new JSONObject();
+
+		//split cuts the decimals values out so we can check for appropriate num of digits
 		String[] split = ((Double)ccBalance).toString().split("\\.");
-		
-		if(ccBalance<=0||ccInterest<0||months<=0||split[1].length()>2) {
-			response="Invalid inputs, please try again.";
-		}else {;
+
+		if(ccBalance>0&&ccInterest>=0&&months>0&&split[1].length()<=2) {
 			double totalInterest = calcInterest(ccBalance,ccInterest);
 			DecimalFormat df = new DecimalFormat("0.##");
-			
-			response="Your monthly payment: $"+calcMonthlyPayment(ccBalance,totalInterest,months)+
-					"\nThe total principle: $"+df.format(ccBalance)+
-					"\nThe total interest: $"+df.format(totalInterest)+"\n\n";
-		}
-		return response;
+
+			returnObject.put("CCTotalBalance", Double.parseDouble(df.format(ccBalance)));
+			returnObject.put("CCTotalInterest", Double.parseDouble(df.format(totalInterest)));
+			returnObject.put("MonthlyPayment", calcMonthlyPayment(ccBalance,totalInterest,months));
+		}else
+			return null;
+
+		return returnObject;
 
 	}
 	
