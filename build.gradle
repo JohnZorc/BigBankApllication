@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	compile 'org.mongodb:mongodb-driver-sync:4.1.1'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.json:json:20200518'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
