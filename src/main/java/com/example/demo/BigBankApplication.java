@@ -51,7 +51,7 @@ public class BigBankApplication {
 		double monthly = obj.getDouble("monthly");
 		double yearPeriods = obj.getDouble("yearPeriods");
 		double interestRate = obj.getDouble("interestRate");
-		String APIKey = obj.getString("APIKey");
+		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( SScalc,  APIKey,  "/SimpleSavings");
 
@@ -71,7 +71,7 @@ public class BigBankApplication {
 		double downPaymentAsPercent = obj.getDouble("downPaymentAsPercent");
 		int loanLength = obj.getInt("loanLength");
 		double interestRate = obj.getDouble("interestRate");
-		String APIKey = obj.getString("APIKey");
+		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( MortCalc,  APIKey,  "/MortgageCalculator");
 
@@ -86,7 +86,7 @@ public class BigBankApplication {
 		double CCBalance = obj.getDouble("CCBalance");
 		double CCInterestRate = obj.getDouble("CCInterestRate");
 		double minimumPaymentPercentage = obj.getDouble("minimumPaymentPercentage");
-		String APIKey = obj.getString("APIKey");
+		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( CreditMin,  APIKey,  "/CCMinCalculator");
 
@@ -101,7 +101,7 @@ public class BigBankApplication {
 		double ccBalance = obj.getDouble("CCBalance");
 		double ccInterest = obj.getDouble("CCInterest");
 		int months = obj.getInt("Months");
-		String APIKey = obj.getString("APIKey");
+		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( CreditPayoff,  APIKey,  "/CCPayoffCalculator");
 
@@ -170,30 +170,9 @@ public class BigBankApplication {
 		return deletedUser.toString();
 	}
 
-	@PostMapping("/AddLog")
-	public String AddLog() {
-
-		/*
-		* Team here are the instructions on how to use the DB
-		* 	1. Get your collection
-		* 	2. Perform CRUD operations on it (look at link for example).
-		* */
-
-		// Here is how to create a `Log` object and save it on the db.
-		// Step 1:
-		MongoCollection<Log> logs = database.getCollection("log", Log.class);
-
-		// Step 2:
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		Log example = new Log(timestamp.toString(), "requestbody","/Example", "APIKey");
-		logs.insertOne(example);
-
-		return example.toString();
-	}
-
 	@GetMapping("/GetAllLogs")
 	public List<String> GetAllLogs() {
-		MongoCollection<Document> logs = database.getCollection("log");
+		MongoCollection<Document> logs = database.getCollection("requestHistory");
 		List<String> response = new ArrayList<String>();
 
 		Consumer<Document> addLogToList = new Consumer<Document>() {
@@ -213,7 +192,7 @@ public class BigBankApplication {
 		return response;
 	}
 
-	public void AddLog(String body, String APIKey, String EndPoint) {
+	public void AddLog(String body, int APIKey, String EndPoint) {
 		//Returns collection or view object. Will create one if there is not one yet specified
 		MongoCollection<Log> logs = database.getCollection("requestHistory", Log.class);
 
