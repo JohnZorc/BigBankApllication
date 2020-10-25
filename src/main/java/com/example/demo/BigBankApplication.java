@@ -48,6 +48,9 @@ public class BigBankApplication {
 		double monthly = obj.getDouble("monthly");
 		double yearPeriods = obj.getDouble("yearPeriods");
 		double interestRate = obj.getDouble("interestRate");
+		String APIKey = obj.getString("APIKey");
+		//Log this request
+		AddLog( SScalc,  APIKey,  "/SimpleSavings");
 
 		//Get your JSON object of values from the SSCalculator class
 		final JSONObject testObject = SimpleSavingsCalculator.SSCalculator(deposit,monthly,yearPeriods,interestRate);
@@ -65,6 +68,9 @@ public class BigBankApplication {
 		double downPaymentAsPercent = obj.getDouble("downPaymentAsPercent");
 		int loanLength = obj.getInt("loanLength");
 		double interestRate = obj.getDouble("interestRate");
+		String APIKey = obj.getString("APIKey");
+		//Log this request
+		AddLog( MortCalc,  APIKey,  "/MortgageCalculator");
 
 		return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate); //TODO: Change return value to double and input data into your function
 	}
@@ -77,6 +83,9 @@ public class BigBankApplication {
 		double CCBalance = obj.getDouble("CCBalance");
 		double CCInterestRate = obj.getDouble("CCInterestRate");
 		double minimumPaymentPercentage = obj.getDouble("minimumPaymentPercentage");
+		String APIKey = obj.getString("APIKey");
+		//Log this request
+		AddLog( CreditMin,  APIKey,  "/CCMinCalculator");
 
 		return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance, CCInterestRate, minimumPaymentPercentage);
 	}
@@ -89,6 +98,9 @@ public class BigBankApplication {
 		double ccBalance = obj.getDouble("CCBalance");
 		double ccInterest = obj.getDouble("CCInterest");
 		int months = obj.getInt("Months");
+		String APIKey = obj.getString("APIKey");
+		//Log this request
+		AddLog( CreditPayoff,  APIKey,  "/CCPayoffCalculator");
 
 		//Get your JSON object of values from the SSCalculator class
 		final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
