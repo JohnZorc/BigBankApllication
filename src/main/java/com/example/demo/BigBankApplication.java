@@ -1,10 +1,13 @@
 package com.example.demo;
 
 import com.example.demo.schemas.Log;
+import com.example.demo.schemas.User;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.conversions.Bson;
+import static com.mongodb.client.model.Filters.eq;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.json.JSONObject;
@@ -97,6 +100,79 @@ public class BigBankApplication {
 		return returnString;
 
 	}
+
+	/*
+	Your program should include an open endpoint that accepts JSON containing information about the requesting entity:
+	organization name,
+	industry,
+	point of contact full name,
+	POC email
+
+	and return an API key.
+	 */
+	@PostMapping("/AddKey")
+	public int AddKey(@RequestBody String entityInfo) {
+		final JSONObject entityInfoJSON = new JSONObject(entityInfo);
+		MongoCollection<User> users = database.getCollection("user", User.class);
+		final int apiKey;
+
+		//Get all of the values via the keys
+		String orgName = entityInfoJSON.getString("Organization_Name");
+		String industry = entityInfoJSON.getString("Industry");
+		String POCname = entityInfoJSON.getString("PointOfContact_name");
+		String POCemail = entityInfoJSON.getString("PointOfContact_email");
+
+		//create key
+		apiKey = (orgName+industry+POCname+POCemail).hashCode();
+
+		User newUser = new User(
+				orgName,
+				industry,
+				POCname,
+				POCemail,
+				apiKey
+		);
+		//check if apikey already exists, if not -> log key and user data into db
+		if(users.find(eq("APIKey", apiKey))==null)
+			users.insertOne(newUser);
+
+		return apiKey;
+		//was using the returns below to check if inserted
+//		Bson filter = eq("APIKey", apiKey);
+//		return users.find(filter).first().toString();
+//		return users.find().first().toString();
+	}
+
+	//Receives key and deletes it from DB.
+	@DeleteMapping("/RevokeKey")
+	public String RevokeKey(@RequestBody String apiKey) {
+		MongoCollection<User> users = database.getCollection("user", User.class);
+		final JSONObject keyJSON = new JSONObject(apiKey);
+
+		//find user based on apiKey
+		Bson filter = eq("APIKey", keyJSON.getInt("APIKey"));
+
+		//delete from db
+		User deletedUser = users.findOneAndDelete(filter);
+
+		//return deleted user
+		return deletedUser.toString();
+//		return deletedUser!=null?"true":"false";
+	}
+
+	//Made this endpoint to try to grab an inserted user
+//	@GetMapping("/GetUser")
+//	public String GetUser(@RequestBody String apiKey) {
+//		MongoCollection<User> users = database.getCollection("user", User.class);
+//		final JSONObject keyJSON = new JSONObject(apiKey);
+//
+//		//find user based on apiKey
+//		Bson filter = eq("APIKey", keyJSON.getInt("APIKey"));
+//		User deletedUser = users.find(filter).first();
+//
+//		//return deleted user
+//		return deletedUser.toString();
+//	}
 
 	@PostMapping("/AddLog")
 	public String AddLog() {
