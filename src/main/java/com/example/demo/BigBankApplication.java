@@ -100,6 +100,7 @@ public class BigBankApplication {
 
 	@PostMapping("/AddLog")
 	public String AddLog() {
+
 		/*
 		* Team here are the instructions on how to use the DB
 		* 	1. Get your collection
@@ -112,7 +113,7 @@ public class BigBankApplication {
 
 		// Step 2:
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		Log example = new Log(timestamp.toString(), "request","/DBExample", "sampleAPIkey");
+		Log example = new Log(timestamp.toString(), "requestbody","/Example", "APIKey");
 		logs.insertOne(example);
 
 		return example.toString();
@@ -133,8 +134,21 @@ public class BigBankApplication {
 
 		logs.find().forEach(addLogToList);
 
+		System.out.println(response);
+
 
 
 		return response;
+	}
+
+	public void AddLog(String body, String APIKey, String EndPoint) {
+		//Returns collection or view object. Will create one if there is not one yet specified
+		MongoCollection<Log> logs = database.getCollection("requestHistory", Log.class);
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		Log insert = new Log(timestamp.toString(), body, EndPoint, APIKey);
+
+		//inserts the new log document into the log collection in the big-bank-db database
+		logs.insertOne(insert);
 	}
 }
