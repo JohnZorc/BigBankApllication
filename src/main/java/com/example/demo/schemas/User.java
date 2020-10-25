@@ -23,7 +23,9 @@ public class User {
         this.APIKey = APIKey;
     }
 
+    public User(){
 
+    }
 
 
     @Override

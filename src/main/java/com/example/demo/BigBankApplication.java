@@ -114,7 +114,7 @@ public class BigBankApplication {
 	public int AddKey(@RequestBody String entityInfo) {
 		final JSONObject entityInfoJSON = new JSONObject(entityInfo);
 		MongoCollection<User> users = database.getCollection("user", User.class);
-		final int apiKey;
+		int apiKey;
 
 		//Get all of the values via the keys
 		String orgName = entityInfoJSON.getString("Organization_Name");
@@ -132,15 +132,14 @@ public class BigBankApplication {
 				POCemail,
 				apiKey
 		);
+
 		//check if apikey already exists, if not -> log key and user data into db
-		if(users.find(eq("APIKey", apiKey))==null)
+		if(users.find(eq("APIKey", apiKey)).first()==null)
 			users.insertOne(newUser);
+		else
+			apiKey = -1;
 
 		return apiKey;
-		//was using the returns below to check if inserted
-//		Bson filter = eq("APIKey", apiKey);
-//		return users.find(filter).first().toString();
-//		return users.find().first().toString();
 	}
 
 	//Receives key and deletes it from DB.
@@ -157,22 +156,7 @@ public class BigBankApplication {
 
 		//return deleted user
 		return deletedUser.toString();
-//		return deletedUser!=null?"true":"false";
 	}
-
-	//Made this endpoint to try to grab an inserted user
-//	@GetMapping("/GetUser")
-//	public String GetUser(@RequestBody String apiKey) {
-//		MongoCollection<User> users = database.getCollection("user", User.class);
-//		final JSONObject keyJSON = new JSONObject(apiKey);
-//
-//		//find user based on apiKey
-//		Bson filter = eq("APIKey", keyJSON.getInt("APIKey"));
-//		User deletedUser = users.find(filter).first();
-//
-//		//return deleted user
-//		return deletedUser.toString();
-//	}
 
 	@PostMapping("/AddLog")
 	public String AddLog() {
