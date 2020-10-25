@@ -51,6 +51,9 @@ public class BigBankApplication {
 		double monthly = obj.getDouble("monthly");
 		double yearPeriods = obj.getDouble("yearPeriods");
 		double interestRate = obj.getDouble("interestRate");
+		String APIKey = obj.getString("APIKey");
+		//Log this request
+		AddLog( SScalc,  APIKey,  "/SimpleSavings");
 
 		//Get your JSON object of values from the SSCalculator class
 		final JSONObject testObject = SimpleSavingsCalculator.SSCalculator(deposit,monthly,yearPeriods,interestRate);
@@ -68,6 +71,9 @@ public class BigBankApplication {
 		double downPaymentAsPercent = obj.getDouble("downPaymentAsPercent");
 		int loanLength = obj.getInt("loanLength");
 		double interestRate = obj.getDouble("interestRate");
+		String APIKey = obj.getString("APIKey");
+		//Log this request
+		AddLog( MortCalc,  APIKey,  "/MortgageCalculator");
 
 		return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate); //TODO: Change return value to double and input data into your function
 	}
@@ -80,6 +86,9 @@ public class BigBankApplication {
 		double CCBalance = obj.getDouble("CCBalance");
 		double CCInterestRate = obj.getDouble("CCInterestRate");
 		double minimumPaymentPercentage = obj.getDouble("minimumPaymentPercentage");
+		String APIKey = obj.getString("APIKey");
+		//Log this request
+		AddLog( CreditMin,  APIKey,  "/CCMinCalculator");
 
 		return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance, CCInterestRate, minimumPaymentPercentage);
 	}
@@ -92,6 +101,9 @@ public class BigBankApplication {
 		double ccBalance = obj.getDouble("CCBalance");
 		double ccInterest = obj.getDouble("CCInterest");
 		int months = obj.getInt("Months");
+		String APIKey = obj.getString("APIKey");
+		//Log this request
+		AddLog( CreditPayoff,  APIKey,  "/CCPayoffCalculator");
 
 		//Get your JSON object of values from the SSCalculator class
 		final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
@@ -160,6 +172,7 @@ public class BigBankApplication {
 
 	@PostMapping("/AddLog")
 	public String AddLog() {
+
 		/*
 		* Team here are the instructions on how to use the DB
 		* 	1. Get your collection
@@ -172,7 +185,7 @@ public class BigBankApplication {
 
 		// Step 2:
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		Log example = new Log(timestamp.toString(), "request","/DBExample", "sampleAPIkey");
+		Log example = new Log(timestamp.toString(), "requestbody","/Example", "APIKey");
 		logs.insertOne(example);
 
 		return example.toString();
@@ -193,8 +206,21 @@ public class BigBankApplication {
 
 		logs.find().forEach(addLogToList);
 
+		System.out.println(response);
+
 
 
 		return response;
+	}
+
+	public void AddLog(String body, String APIKey, String EndPoint) {
+		//Returns collection or view object. Will create one if there is not one yet specified
+		MongoCollection<Log> logs = database.getCollection("requestHistory", Log.class);
+
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		Log insert = new Log(timestamp.toString(), body, EndPoint, APIKey);
+
+		//inserts the new log document into the log collection in the big-bank-db database
+		logs.insertOne(insert);
 	}
 }
