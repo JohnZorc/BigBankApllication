@@ -16,6 +16,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
+
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,7 +156,7 @@ public class BigBankApplication {
 	and return an API key.
 	 */
 	@PostMapping("/AddKey")
-	public int AddKey(@RequestBody String entityInfo) {
+	public String AddKey(@RequestBody String entityInfo, HttpServletRequest request) {
 		final JSONObject entityInfoJSON = new JSONObject(entityInfo);
 		MongoCollection<User> users = database.getCollection("user", User.class);
 		int apiKey;
@@ -164,6 +166,8 @@ public class BigBankApplication {
 		String industry = entityInfoJSON.getString("Industry");
 		String POCname = entityInfoJSON.getString("PointOfContact_name");
 		String POCemail = entityInfoJSON.getString("PointOfContact_email");
+		String ip = request.getRemoteAddr();
+
 
 		//create key
 		apiKey = (orgName+industry+POCname+POCemail).hashCode();
@@ -173,7 +177,8 @@ public class BigBankApplication {
 				industry,
 				POCname,
 				POCemail,
-				apiKey
+				apiKey,
+				ip
 		);
 
 		//check if apikey already exists, if not -> log key and user data into db
@@ -182,7 +187,8 @@ public class BigBankApplication {
 		else
 			apiKey = -1;
 
-		return apiKey;
+		String response = String.format("IP: %s, API KEY: %s", ip, apiKey);
+		return response;
 	}
 
 	//Receives key and deletes it from DB.
