@@ -43,7 +43,7 @@ public class BigBankApplication {
 
 
 	@PostMapping("/SimpleSavings")
-	public String SimpleSavings(@RequestBody String SScalc) {
+	public String SimpleSavings(@RequestBody String SScalc) throws Exception {
 		final JSONObject obj = new JSONObject(SScalc);
 
 		//Get all of the values via the keys
@@ -54,12 +54,20 @@ public class BigBankApplication {
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( SScalc,  APIKey,  "/SimpleSavings");
+		if (APIKeyInterceptor(APIKey))
+		{
+			final JSONObject testObject = SimpleSavingsCalculator.SSCalculator(deposit,monthly,yearPeriods,interestRate);
+
+			String returnString = testObject.toString();
+			return returnString;
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
 
 		//Get your JSON object of values from the SSCalculator class
-		final JSONObject testObject = SimpleSavingsCalculator.SSCalculator(deposit,monthly,yearPeriods,interestRate);
 
-		String returnString = testObject.toString();
-		return returnString;
 	}
 
 	@PostMapping("/MortgageCalculator")
@@ -74,8 +82,14 @@ public class BigBankApplication {
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( MortCalc,  APIKey,  "/MortgageCalculator");
-
-		return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate); //TODO: Change return value to double and input data into your function
+		if (APIKeyInterceptor(APIKey))
+		{
+			return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate);
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
 	}
 
 	@PostMapping("/CCMinCalculator")
@@ -90,11 +104,19 @@ public class BigBankApplication {
 		//Log this request
 		AddLog( CreditMin,  APIKey,  "/CCMinCalculator");
 
-		return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance, CCInterestRate, minimumPaymentPercentage);
+		if (APIKeyInterceptor(APIKey))
+		{
+			return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance, CCInterestRate, minimumPaymentPercentage);
+
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
 	}
 
 	@PostMapping("/CCPayoffCalculator")
-	public String CCPayoffCalculator(@RequestBody String CreditPayoff) {
+	public String CCPayoffCalculator(@RequestBody String CreditPayoff) throws Exception {
 		final JSONObject obj = new JSONObject(CreditPayoff);
 
 		//Get all of the values via the keys
@@ -105,11 +127,20 @@ public class BigBankApplication {
 		//Log this request
 		AddLog( CreditPayoff,  APIKey,  "/CCPayoffCalculator");
 
-		//Get your JSON object of values from the SSCalculator class
-		final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
+		if (APIKeyInterceptor(APIKey))
+		{
+			//Get your JSON object of values from the SSCalculator class
+			final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
 
-		String returnString = testObject.toString();
-		return returnString;
+			String returnString = testObject.toString();
+			return returnString;
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
+
+
 
 	}
 
@@ -192,7 +223,13 @@ public class BigBankApplication {
 		return response;
 	}
 
-	public void AddLog(String body, int APIKey, String EndPoint) {
+	public boolean APIKeyInterceptor(int APIKey)
+	{
+		MongoCollection<User> users = database.getCollection("user", User.class);
+		return (users.find(eq("APIKey", APIKey)).first()!=null);
+	}
+
+	public void AddLog(String body, int APIKey, String EndPoint) throws Exception {
 		//Returns collection or view object. Will create one if there is not one yet specified
 		MongoCollection<Log> logs = database.getCollection("requestHistory", Log.class);
 
@@ -202,4 +239,6 @@ public class BigBankApplication {
 		//inserts the new log document into the log collection in the big-bank-db database
 		logs.insertOne(insert);
 	}
+
+
 }
