@@ -83,6 +83,22 @@ class BigBankApplicationTest {
     }
 
     @Test
-    void CCPayoffCalculator() {
+    void CCPayoffCalculator() throws Exception {
+        // Mock request body
+        final JSONObject obj = new JSONObject();
+        obj.put("CCBalance", 320.63);
+        obj.put("CCInterest", 7.5);
+        obj.put("Months", 25);
+
+        // Expected response:
+        String response = CCPayoff.printPayOff(320.63, 7.5, 25).toString();
+
+        mvc.perform(post("/CCPayoffCalculator")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(obj.toString())
+                .characterEncoding("utf-8"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(response)))
+                .andReturn();
     }
 }

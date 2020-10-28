@@ -3,6 +3,8 @@ package com.example.demo;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class CCPayoff {
 
@@ -14,10 +16,12 @@ public class CCPayoff {
 
 		if(ccBalance>0&&ccInterest>=0&&months>0&&split[1].length()<=2) {
 			double totalInterest = calcInterest(ccBalance,ccInterest);
-			DecimalFormat df = new DecimalFormat("0.##");
+			// Format values to return them
+			Locale locality = new Locale("en", "US");
+			NumberFormat df = NumberFormat.getCurrencyInstance(locality);
 
-			returnObject.put("CCTotalBalance", Double.parseDouble(df.format(ccBalance)));
-			returnObject.put("CCTotalInterest", Double.parseDouble(df.format(totalInterest)));
+			returnObject.put("CCTotalBalance", df.format(ccBalance));
+			returnObject.put("CCTotalInterest", df.format(calcInterest(ccBalance,ccInterest)));
 			returnObject.put("MonthlyPayment", calcMonthlyPayment(ccBalance,totalInterest,months));
 		}else
 			return null;
@@ -26,11 +30,13 @@ public class CCPayoff {
 
 	}
 	
-	public static double calcMonthlyPayment(double totalPrinciple, double totalInterest, int months) {
+	public static String calcMonthlyPayment(double totalPrinciple, double totalInterest, int months) {
 		//format to have 2 dec points
-		DecimalFormat df = new DecimalFormat("0.##");
+		Locale locality = new Locale("en", "US");
+		NumberFormat df = NumberFormat.getCurrencyInstance(locality);
+
 		String result=df.format((totalPrinciple+totalInterest)/months);
-		return Double.parseDouble(result);
+		return result;
 	}
 	
 	public static double calcInterest(double ccBalance, double ccInterest) {

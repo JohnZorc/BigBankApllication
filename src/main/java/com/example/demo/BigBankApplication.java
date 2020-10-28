@@ -113,15 +113,7 @@ public class BigBankApplication {
 
 	}
 
-	/*
-	Your program should include an open endpoint that accepts JSON containing information about the requesting entity:
-	organization name,
-	industry,
-	point of contact full name,
-	POC email
-
-	and return an API key.
-	 */
+	//Receives user data and returns key
 	@PostMapping("/AddKey")
 	public int AddKey(@RequestBody String entityInfo) {
 		final JSONObject entityInfoJSON = new JSONObject(entityInfo);
