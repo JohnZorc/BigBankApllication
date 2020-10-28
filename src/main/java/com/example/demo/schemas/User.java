@@ -11,16 +11,18 @@ public class User {
     public String industry;
     public String pocFullName;
     public String pocEmail;
+    public String ip;
     public int APIKey;
 
 
     // Constructor (you can have multiple)
-    public User(String organizationName, String industry, String pocFullName, String pocEmail, int APIKey){
+    public User(String organizationName, String industry, String pocFullName, String pocEmail, int APIKey, String ip){
         this.organizationName = organizationName;
         this.industry = industry;
         this.pocFullName = pocFullName;
         this.pocEmail = pocEmail;
         this.APIKey = APIKey;
+        this.ip = ip;
     }
 
     public User(){

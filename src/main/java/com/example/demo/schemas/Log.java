@@ -10,12 +10,12 @@ public class Log {
     public String timestamp;
     public String requestOrResponse;
     public String endpoint;
-    public String APIKeyUsed;
+    public int APIKeyUsed;
 
 
 
     // Constructor (you can have multiple)
-    public Log(String timestamp, String requestOrResponse, String endpoint, String APIKeyUsed){
+    public Log(String timestamp, String requestOrResponse, String endpoint, int APIKeyUsed){
         this.timestamp = timestamp;
         this.requestOrResponse = requestOrResponse;
         this.endpoint = endpoint;

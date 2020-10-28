@@ -16,6 +16,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
+
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +45,7 @@ public class BigBankApplication {
 
 
 	@PostMapping("/SimpleSavings")
-	public String SimpleSavings(@RequestBody String SScalc) {
+	public String SimpleSavings(@RequestBody String SScalc) throws Exception {
 		final JSONObject obj = new JSONObject(SScalc);
 
 		//Get all of the values via the keys
@@ -51,15 +53,23 @@ public class BigBankApplication {
 		double monthly = obj.getDouble("monthly");
 		double yearPeriods = obj.getDouble("yearPeriods");
 		double interestRate = obj.getDouble("interestRate");
-		String APIKey = obj.getString("APIKey");
+		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( SScalc,  APIKey,  "/SimpleSavings");
+		if (APIKeyInterceptor(APIKey))
+		{
+			final JSONObject testObject = SimpleSavingsCalculator.SSCalculator(deposit,monthly,yearPeriods,interestRate);
+
+			String returnString = testObject.toString();
+			return returnString;
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
 
 		//Get your JSON object of values from the SSCalculator class
-		final JSONObject testObject = SimpleSavingsCalculator.SSCalculator(deposit,monthly,yearPeriods,interestRate);
 
-		String returnString = testObject.toString();
-		return returnString;
 	}
 
 	@PostMapping("/MortgageCalculator")
@@ -71,11 +81,17 @@ public class BigBankApplication {
 		double downPaymentAsPercent = obj.getDouble("downPaymentAsPercent");
 		int loanLength = obj.getInt("loanLength");
 		double interestRate = obj.getDouble("interestRate");
-		String APIKey = obj.getString("APIKey");
+		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( MortCalc,  APIKey,  "/MortgageCalculator");
-
-		return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate); //TODO: Change return value to double and input data into your function
+		if (APIKeyInterceptor(APIKey))
+		{
+			return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate);
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
 	}
 
 	@PostMapping("/CCMinCalculator")
@@ -86,36 +102,53 @@ public class BigBankApplication {
 		double CCBalance = obj.getDouble("CCBalance");
 		double CCInterestRate = obj.getDouble("CCInterestRate");
 		double minimumPaymentPercentage = obj.getDouble("minimumPaymentPercentage");
-		String APIKey = obj.getString("APIKey");
+		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( CreditMin,  APIKey,  "/CCMinCalculator");
 
-		return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance, CCInterestRate, minimumPaymentPercentage);
+		if (APIKeyInterceptor(APIKey))
+		{
+			return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance, CCInterestRate, minimumPaymentPercentage);
+
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
 	}
 
 	@PostMapping("/CCPayoffCalculator")
-	public String CCPayoffCalculator(@RequestBody String CreditPayoff) {
+	public String CCPayoffCalculator(@RequestBody String CreditPayoff) throws Exception {
 		final JSONObject obj = new JSONObject(CreditPayoff);
 
 		//Get all of the values via the keys
 		double ccBalance = obj.getDouble("CCBalance");
 		double ccInterest = obj.getDouble("CCInterest");
 		int months = obj.getInt("Months");
-		String APIKey = obj.getString("APIKey");
+		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( CreditPayoff,  APIKey,  "/CCPayoffCalculator");
 
-		//Get your JSON object of values from the SSCalculator class
-		final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
+		if (APIKeyInterceptor(APIKey))
+		{
+			//Get your JSON object of values from the SSCalculator class
+			final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
 
-		String returnString = testObject.toString();
-		return returnString;
+			String returnString = testObject.toString();
+			return returnString;
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
+
+
 
 	}
 
 	//Receives user data and returns key
 	@PostMapping("/AddKey")
-	public int AddKey(@RequestBody String entityInfo) {
+	public String AddKey(@RequestBody String entityInfo, HttpServletRequest request) {
 		final JSONObject entityInfoJSON = new JSONObject(entityInfo);
 		MongoCollection<User> users = database.getCollection("user", User.class);
 		int apiKey;
@@ -125,6 +158,8 @@ public class BigBankApplication {
 		String industry = entityInfoJSON.getString("Industry");
 		String POCname = entityInfoJSON.getString("PointOfContact_name");
 		String POCemail = entityInfoJSON.getString("PointOfContact_email");
+		String ip = request.getRemoteAddr();
+
 
 		//create key
 		apiKey = (orgName+industry+POCname+POCemail).hashCode();
@@ -134,7 +169,8 @@ public class BigBankApplication {
 				industry,
 				POCname,
 				POCemail,
-				apiKey
+				apiKey,
+				ip
 		);
 
 		//check if apikey already exists, if not -> log key and user data into db
@@ -143,7 +179,8 @@ public class BigBankApplication {
 		else
 			apiKey = -1;
 
-		return apiKey;
+		String response = String.format("IP: %s, API KEY: %s", ip, apiKey);
+		return response;
 	}
 
 	//Receives key and deletes it from DB.
@@ -162,30 +199,9 @@ public class BigBankApplication {
 		return deletedUser.toString();
 	}
 
-	@PostMapping("/AddLog")
-	public String AddLog() {
-
-		/*
-		* Team here are the instructions on how to use the DB
-		* 	1. Get your collection
-		* 	2. Perform CRUD operations on it (look at link for example).
-		* */
-
-		// Here is how to create a `Log` object and save it on the db.
-		// Step 1:
-		MongoCollection<Log> logs = database.getCollection("log", Log.class);
-
-		// Step 2:
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		Log example = new Log(timestamp.toString(), "requestbody","/Example", "APIKey");
-		logs.insertOne(example);
-
-		return example.toString();
-	}
-
 	@GetMapping("/GetAllLogs")
 	public List<String> GetAllLogs() {
-		MongoCollection<Document> logs = database.getCollection("log");
+		MongoCollection<Document> logs = database.getCollection("requestHistory");
 		List<String> response = new ArrayList<String>();
 
 		Consumer<Document> addLogToList = new Consumer<Document>() {
@@ -205,7 +221,13 @@ public class BigBankApplication {
 		return response;
 	}
 
-	public void AddLog(String body, String APIKey, String EndPoint) {
+	public boolean APIKeyInterceptor(int APIKey)
+	{
+		MongoCollection<User> users = database.getCollection("user", User.class);
+		return (users.find(eq("APIKey", APIKey)).first()!=null);
+	}
+
+	public void AddLog(String body, int APIKey, String EndPoint) throws Exception {
 		//Returns collection or view object. Will create one if there is not one yet specified
 		MongoCollection<Log> logs = database.getCollection("requestHistory", Log.class);
 
@@ -215,4 +237,6 @@ public class BigBankApplication {
 		//inserts the new log document into the log collection in the big-bank-db database
 		logs.insertOne(insert);
 	}
+
+
 }
