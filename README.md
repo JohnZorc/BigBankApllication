@@ -125,16 +125,10 @@ Requires the following parameters in the JSON body of the request:
 ### Docker:
 __After compiling the project__, run the following: 
 
-* run the following to build and test production code in a Docker container:
-    ```shell script
-    docker build -f Dockerfile.production -t production:latest . && docker run production:latest 
-    ```
+1. `gradle build -x test`
+2. `docker build -t bbapp .`
+3. `docker-compose up`
 
-* run the following to build and test unit tests in a Docker container
-    ```shell script
-    docker build -f Dockerfile.test -t test:latest . && docker run test:latest 
-    ```
-  
 ### Vagrant:  
 #### Setting up Vagrant 
 Download and install our repository. The Vagrantfile includes commands for setting up the 
@@ -149,5 +143,8 @@ Use to log into your vitual machine.
 
 ##### Running Tests
 All of the tests will be included in a tests folder. Navigate to the test folder and compile the test file you wish to run using javac, then run that test file using the java command. 
+
+## Link to deployed application:
+....
 
 
