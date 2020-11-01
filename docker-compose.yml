@@ -2,14 +2,28 @@ version: "3.8"
 
 services:
   database:
+    container_name: "database"
     image: "mongo:latest"
     ports:
       - "27017:27017"
-    network_mode: host
+    expose:
+      - 27017
+    networks:
+      - shared-net
 
   web:
+    container_name: "web"
     image: "bbapp"
+    expose:
+      - 8080
     ports:
       - "8080:8080"
-    network_mode: host
+    depends_on:
+      - database
+    networks:
+      - shared-net
 
+networks:
+  shared-net:
+    name: "shared-net"
+    driver: "bridge"
