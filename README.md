@@ -145,6 +145,6 @@ Use to log into your vitual machine.
 All of the tests will be included in a tests folder. Navigate to the test folder and compile the test file you wish to run using javac, then run that test file using the java command. 
 
 ## Link to deployed application:
-....
+http://35.193.68.187:8080/
 
 
