@@ -5,6 +5,9 @@ jdk:
 
 #Creates the build with multiple jobs specified by the "script", jobs are grouped by the "-stage"
 #identifier, multiple jobs may run in the same stage(In parallell)
+before_install:
+  - chmod +x gradlew
+
 jobs:
   include:
     - stage: build
