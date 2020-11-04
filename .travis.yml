@@ -1,7 +1,7 @@
 #Specifies the language and version the project should be built with
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 #Creates the build with multiple jobs specified by the "script", jobs are grouped by the "-stage"
 #identifier, multiple jobs may run in the same stage(In parallell)
