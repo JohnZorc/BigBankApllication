@@ -1,5 +1,5 @@
 #Specifies the language and version the project should be built with
-langauge: java
+language: java
 jdk:
   - oraclejdk8
 
@@ -24,7 +24,7 @@ jobs:
 #Specifies the order of the stages and chooses which branches run the stages
 stages:
   - name: build
-    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int
+    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int OR branch = build
   - name: unit-tests
     if: branch = master OR branch = emg-skip-int
   - name: integration-tests
