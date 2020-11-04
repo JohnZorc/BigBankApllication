@@ -1,0 +1,33 @@
+#Specifies the language and version the project should be built with
+langauge: java
+jdk:
+  - oraclejdk8
+
+#Creates the build with multiple jobs specified by the "script", jobs are grouped by the "-stage"
+#identifier, multiple jobs may run in the same stage(In parallell)
+jobs:
+  include:
+    - stage: build
+      script:
+      - ./gradlew build -x test
+      #- ./google_checks.xml
+    - stage: unit-tests
+      script:
+      - ./gradlew test --tests SimpleSavingsCalculatorTests --tests MortgageCalculatorTest --tests CreditCardMinimumPaymentCalculatorTests --tests CCPayoffTest
+      -
+    - stage: integration-tests
+      script: ./gradlew test --tests
+
+    - stage: deploy
+      script: ./deploy-script
+
+#Specifies the order of the stages and chooses which branches run the stages
+stages:
+  - name: build
+    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int
+  - name: unit-tests
+    if: branch = master OR branch = emg-skip-int
+  - name: integration-tests
+    if: branch = master OR branch = emg-skip-unit
+  - name: deploy
+    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int
