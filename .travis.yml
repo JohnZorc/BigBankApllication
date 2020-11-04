@@ -19,7 +19,7 @@ jobs:
       - ./gradlew test --tests SimpleSavingsCalculatorTests --tests MortgageCalculatorTest --tests CreditCardMinimumPaymentCalculatorTests --tests CCPayoffTest
       -
     - stage: integration-tests
-      script: ./gradlew test --tests
+      script: ./gradlew test --tests BigBankApplicationTest
 
     - stage: deploy
       script: ./deploy-script
