@@ -13,7 +13,7 @@ jobs:
     - stage: build
       script:
       - ./gradlew build -x test
-      #- ./google_checks.xml
+      - ./java -jar checkstyle-8.37-all.jar -c /google_checks.xml src/main/java/com/example/demo/
     - stage: unit-tests
       script:
       - ./gradlew test --tests SimpleSavingsCalculatorTests --tests MortgageCalculatorTest --tests CreditCardMinimumPaymentCalculatorTests --tests CCPayoffTest
@@ -27,7 +27,7 @@ jobs:
 #Specifies the order of the stages and chooses which branches run the stages
 stages:
   - name: build
-    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int OR branch = build
+    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int OR branch = build OR branch = linter-work
   - name: unit-tests
     if: branch = master OR branch = emg-skip-int
   - name: integration-tests
