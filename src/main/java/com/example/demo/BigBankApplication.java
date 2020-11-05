@@ -2,7 +2,9 @@ package com.example.demo;
 
 import com.example.demo.schemas.Log;
 import com.example.demo.schemas.User;
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -20,6 +22,7 @@ import com.mongodb.client.MongoClient;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -34,10 +37,12 @@ public class BigBankApplication {
 	}
 
 	// Setting up DB
+	ConnectionString connectionString = new ConnectionString("mongodb://myUserAdmin:pp29softTest@35.188.134.30:27017/");
 	CodecRegistry pojoCodecRegistry = fromRegistries(
 			MongoClientSettings.getDefaultCodecRegistry(),
 			fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 	MongoClientSettings settings = MongoClientSettings.builder()
+			.applyConnectionString(connectionString)
 			.codecRegistry(pojoCodecRegistry)
 			.build();
 	MongoClient mongoClient = MongoClients.create(settings); // Connects to mongoDB deamon running on port 27017
