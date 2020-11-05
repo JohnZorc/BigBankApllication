@@ -19,6 +19,7 @@ jobs:
   - stage: integration-tests
     script: "./gradlew test --tests BigBankApplicationTest"
 
+
 deploy:
   provider: gae
   keyfile: "PP2-Group-9-9ebbe0ca35d8.json.enc"
