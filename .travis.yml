@@ -24,10 +24,11 @@ deploy:
   keyfile: "PP2-Group-9-9ebbe0ca35d8.json.enc"
   project: "pp2-group-9"
   on:
-    - master
-    - emg-skip-int
-    - emg-skip-unit
-    - emg-skip-all
+    branch:
+      - master
+      - emg-skip-int
+      - emg-skip-unit
+      - emg-skip-all
 
 
 stages:
