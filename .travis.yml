@@ -27,7 +27,7 @@ jobs:
 #Specifies the order of the stages and chooses which branches run the stages
 stages:
   - name: build
-    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int OR branch = build OR branch = linter-work
+    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int OR branch = build OR branch = linter-Work
   - name: unit-tests
     if: branch = master OR branch = emg-skip-int
   - name: integration-tests
