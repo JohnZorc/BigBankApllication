@@ -1,7 +1,8 @@
 package com.example.demo;
 import org.json.JSONObject;
 
-public class SimpleSavingsCalculator {
+public class SimpleSavingsCalculator
+{
 
     public static JSONObject SSCalculator (double deposit, double monthly, double yearPeriods, double interestRate) {
         double totalContributions= 0.0; // = (double)12 * yearPeriods * monthlyyyy;
