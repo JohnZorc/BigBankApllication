@@ -17,16 +17,19 @@ jobs:
     - 
   - stage: integration-tests
     script: "./gradlew test --tests BigBankApplicationTest"
+
 deploy:
   provider: gae
   keyfile: project.json
   project: pp2-group-9
   on:
     branch:
-    - master
-    - emg-skip-int
-    - emg-skip-unit
-    - emg-skip-all
+      - master
+      - emg-skip-int
+      - emg-skip-unit
+      - emg-skip-all
+  skip_cleanup: true
+
 stages:
 - name: build
   if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch
