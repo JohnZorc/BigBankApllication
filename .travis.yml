@@ -1,13 +1,10 @@
-#Specifies the language and version the project should be built with
 language: java
 jdk:
-  - openjdk8
-
-#Creates the build with multiple jobs specified by the "script", jobs are grouped by the "-stage"
-#identifier, multiple jobs may run in the same stage(In parallell)
+- openjdk8
 before_install:
-  - chmod +x gradlew
-
+- openssl aes-256-cbc -K $encrypted_b076cddc14df_key -iv $encrypted_b076cddc14df_iv
+  -in project.json.enc -out project.json -d
+- chmod +x gradlew
 jobs:
   include:
     - stage: build
@@ -21,16 +18,23 @@ jobs:
     - stage: integration-tests
       script: ./gradlew test --tests BigBankApplicationTest
 
-    - stage: deploy
-      script: ./deploy-script
+deploy:
+  provider: gae
+  keyfile: project.json
+  project: pp2-group-9
+  on:
+    branch:
+      - master
+      - emg-skip-int
+      - emg-skip-unit
+      - emg-skip-all
+  skip_cleanup: true
 
-#Specifies the order of the stages and chooses which branches run the stages
 stages:
-  - name: build
-    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int OR branch = build OR branch = linter-Work
-  - name: unit-tests
-    if: branch = master OR branch = emg-skip-int
-  - name: integration-tests
-    if: branch = master OR branch = emg-skip-unit
-  - name: deploy
-    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch = emg-skip-int
+- name: build
+  if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch
+    = emg-skip-int OR branch = build
+- name: unit-tests
+  if: branch = master OR branch = emg-skip-int
+- name: integration-tests
+  if: branch = master OR branch = emg-skip-unit
