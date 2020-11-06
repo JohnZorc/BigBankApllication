@@ -7,16 +7,16 @@ before_install:
 - chmod +x gradlew
 jobs:
   include:
-  - stage: build
-    script:
-    - "./gradlew build -x test"
-  - stage: unit-tests
-    script:
-    - "./gradlew test --tests SimpleSavingsCalculatorTests --tests MortgageCalculatorTest
-      --tests CreditCardMinimumPaymentCalculatorTests --tests CCPayoffTest"
-    - 
-  - stage: integration-tests
-    script: "./gradlew test --tests BigBankApplicationTest"
+    - stage: build
+      script:
+      - ./gradlew build -x test
+      - java -jar checkstyle-8.37-all.jar -c Big_Bank.xml src/main/java/com/example/demo/
+    - stage: unit-tests
+      script:
+      - ./gradlew test --tests SimpleSavingsCalculatorTests --tests MortgageCalculatorTest --tests CreditCardMinimumPaymentCalculatorTests --tests CCPayoffTest
+      -
+    - stage: integration-tests
+      script: ./gradlew test --tests BigBankApplicationTest
 
 deploy:
   provider: gae
