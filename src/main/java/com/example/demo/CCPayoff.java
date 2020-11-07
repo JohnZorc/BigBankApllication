@@ -6,7 +6,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class CCPayoff {
+public class CCPayoff
+{
 
 	public static JSONObject printPayOff(double ccBalance, double ccInterest, int months) {
 		final JSONObject returnObject = new JSONObject();
