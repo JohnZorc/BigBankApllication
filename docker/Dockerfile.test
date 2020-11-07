@@ -1,0 +1,13 @@
+# Pull the Java JDK 15 image
+FROM openjdk:8
+
+# Copy our compiled test code to the /tmp directory of our container
+COPY ./out/test/big-bank-cfi-suite-sw-testing-team-9/ /tmp
+
+
+# Set the /tmp directory in our container as our working directory
+WORKDIR /tmp
+
+# Set the entry point of our application
+ENTRYPOINT ["java","main/MainTest"]
+

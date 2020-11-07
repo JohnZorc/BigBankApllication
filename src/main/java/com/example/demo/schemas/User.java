@@ -2,7 +2,8 @@ package com.example.demo.schemas;
 
 import org.bson.types.ObjectId;
 
-public class User {
+public class User
+{
 
     private ObjectId id;
 

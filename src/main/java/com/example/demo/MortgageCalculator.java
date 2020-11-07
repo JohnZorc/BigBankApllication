@@ -5,7 +5,8 @@ import org.json.JSONObject;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class MortgageCalculator {
+public class MortgageCalculator
+{
 
     // INPUTS:
     //  home price,
