@@ -17,7 +17,6 @@ jobs:
     script:
     - "./gradlew test --tests SimpleSavingsCalculatorTests --tests MortgageCalculatorTest
       --tests CreditCardMinimumPaymentCalculatorTests --tests CCPayoffTest"
-    - 
   - stage: integration-tests
     script: "./gradlew test --tests BigBankApplicationTest"
 deploy:
@@ -25,11 +24,11 @@ deploy:
   keyfile: project.json.enc
   project: pp2-group-9
   on:
-  - master
-  - emg-skip-int
-  - emg-skip-unit
-  - emg-skip-all
-  skip_cleanup: true
+    - master
+    - emg-skip-int
+    - emg-skip-unit
+    - emg-skip-all
+
 stages:
 - name: build
   if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch
