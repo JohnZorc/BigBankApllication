@@ -22,7 +22,7 @@ public class MortgageCalculator
     //  total amount paid
 
 
-    public static String calculate(double homePrice, double downPaymentAsPercent, int loanLength, double interestRate) throws Exception {
+    public static JSONObject calculate(double homePrice, double downPaymentAsPercent, int loanLength, double interestRate) throws Exception {
 
         // Check inputs are valid
         if(homePrice <= 0){
@@ -58,7 +58,7 @@ public class MortgageCalculator
         jsonObject.put("amountPaidInInterest", numberFormatter.format(amountPaidInInterest));
         jsonObject.put("totalAmountPaid", numberFormatter.format(totalAmountPaid));
 
-        return jsonObject.toString();
+        return jsonObject;
     }
 
 
