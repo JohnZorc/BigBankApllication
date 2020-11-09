@@ -1,5 +1,5 @@
 # PPA3 Report
-##Linter Style Guide Information
+## Linter Style Guide Information
 I used the github awesome linters link to find a java linter and ended up choosing checkstyle.
  https://github.com/checkstyle/checkstyle  I looked online for some popular xml files and found 
  the Google standard https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml
@@ -41,3 +41,17 @@ The project has three branches that can be used for emergency deployments.
 We chose to go with this emergency deployment implementation because it allows us to quickly the app while choosing a select stage of the 
 deployment pipeline we want to go through. Additionally, since we don't override the travis.yml file, doing a regular deployment after an 
 emergency deployment can be done by pushing to the `master` branch. 
+
+## Rollback Process:
+This project can be rolled back easily to previous versions by switching all traffic on the Google App Engine to a previous version of 
+the project. This can be done by deploying a previous version of the app. After deploying a new version of the project, we can easily 
+revert to previous versions by changing the default deployed version to a previous version. Travis CI ensures that each consecutive 
+update will be deployed, and by visiting https://console.developers.google.com/appengine/versions?project=[YOUR_PROJECT_ID]
+we can set any previous version of the project to the default version, or the command “gcloud app services set-traffic [MY_SERVICE] --splits [MY_VERSION]=1” 
+can be used to switch to a previous version. In the Google App Engine, each deployment, corresponding to each commit, is assigned an ID, 
+which can either be set manually or generated automatically. These can be used to determine which commit to redeploy.
+Outside of the Google App Engine, we can manually revert to previous versions by using git reset --hard <old-commit-id> and pushing it. 
+This will reset the project to a previous version of the project.
+ 
+## Travis CI Slack Integration
+![PPA3 Travis CI Slack Scrnshot](https://user-images.githubusercontent.com/15644940/98496096-ce3e2d80-220e-11eb-9be3-2cec0a2f87a0.PNG)
