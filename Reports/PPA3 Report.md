@@ -50,3 +50,5 @@ update will be deployed, and by visiting https://console.developers.google.com/a
 we can set any previous version of the project to the default version, or the command “gcloud app services set-traffic [MY_SERVICE] --splits [MY_VERSION]=1” 
 can be used to switch to a previous version. In the Google App Engine, each deployment, corresponding to each commit, is assigned an ID, 
 which can either be set manually or generated automatically. These can be used to determine which commit to redeploy.
+Outside of the Google App Engine, we can manually revert to previous versions by using git reset --hard <old-commit-id> and pushing it. 
+This will reset the project to a previous version of the project.
