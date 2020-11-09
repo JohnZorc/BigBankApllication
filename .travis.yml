@@ -38,3 +38,5 @@ stages:
   if: branch = master OR branch = emg-skip-int
 - name: integration-tests
   if: branch = master OR branch = emg-skip-unit
+notifications:
+  slack: drbyron:gIk54cynDV81nZgojHV3Hgsq

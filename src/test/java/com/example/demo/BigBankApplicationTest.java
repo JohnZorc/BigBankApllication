@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.schemas.User;
 import com.jayway.jsonpath.JsonPath;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -24,7 +26,6 @@ class BigBankApplicationTest {
 
     @Autowired
     private static MockMvc mvc;
-
     private static int APIKey;
 
     @BeforeAll
@@ -38,12 +39,11 @@ class BigBankApplicationTest {
         obj.put("Industry", "comp sci");
         obj.put("PointOfContact_name", "Jerry Wu");
         obj.put("PointOfContact_email", "j.wu@ufl.edu");
-        String ip = "random remote address";
 
         final JSONObject responseObj = new JSONObject();
         APIKey = ("organization"+"comp sci"+"Jerry Wu"+"j.wu@ufl.edu").hashCode();
 
-        obj.put("APIKey",APIKey);
+        responseObj.put("APIKey",APIKey);
 
         //addKey should return the API Key through a jsonobj format, this checks if the endpoint works
         MvcResult response = mvc.perform(post("/AddKey")
@@ -51,10 +51,7 @@ class BigBankApplicationTest {
                 .content(obj.toString())
                 .characterEncoding("utf-8"))
                 .andExpect(status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("APIKey").value(APIKey))
-//                .andExpect(content().string(containsString(responseObj.toString())))
                 .andReturn();
-        System.out.println(response.getResponse().getContentAsString());
     }
 
     @AfterAll
@@ -63,22 +60,18 @@ class BigBankApplicationTest {
     public static void terminate() throws Exception {
 
         //create expected return
-        final JSONObject resObj = new JSONObject();
-        resObj.put("organizationName","organization");
-        resObj.put("industry","comp sci");
-        resObj.put("pocFullName","Jerry Wu");
-        resObj.put("pocEmail","j.wu@ufl.edu");
-        resObj.put("ip","random remote address");
-        resObj.put("APIKey",APIKey);
+        final User resUser = new User(
+                "organization",
+                "comp sci",
+                "Jerry Wu",
+                "j.wu@ufl.edu",
+                APIKey,
+                "random remote address"
+        );
 
-        //should we check after deletion that the other functions won't work anymore? (we know it won't, but for the purpose of it being established)
-        mvc.perform(post("/RevokeKey")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""+APIKey)
-                .characterEncoding("utf-8"))
+        mvc.perform( MockMvcRequestBuilders.delete("/RevokeKey/{apikey}", APIKey) )
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(resObj.toString())))
-                .andReturn();
+                .andExpect(content().string(containsString(resUser.toString())));
     }
 
     @Test

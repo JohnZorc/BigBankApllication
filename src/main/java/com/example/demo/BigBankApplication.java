@@ -18,6 +18,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -151,7 +153,13 @@ public class BigBankApplication {
 
 	//Receives user data and returns key
 	@PostMapping("/AddKey")
-	public JSONObject AddKey(@RequestBody String entityInfo, HttpServletRequest request) {
+	public JSONObject AddKey(@RequestBody String entityInfo) {
+
+		//get ip
+		HttpServletRequest request =
+				((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+						.getRequest();
+
 		final JSONObject entityInfoJSON = new JSONObject(entityInfo);
 		MongoCollection<User> users = database.getCollection("user", User.class);
 		int apiKey;
@@ -184,19 +192,18 @@ public class BigBankApplication {
 
 		//recreate into a jsonobject
 		JSONObject response = new JSONObject();
-		response.put("IP",ip);
 		response.put("APIKey",apiKey);
 		return response;
 	}
 
 	//Receives key and deletes it from DB.
-	@DeleteMapping("/RevokeKey")
-	public String RevokeKey(@RequestBody String apiKey) {
+//	@DeleteMapping("/RevokeKey")
+	@DeleteMapping(value = "/RevokeKey/{apikey}")
+	public String RevokeKey(@PathVariable("apikey") int apiKey) {
 		MongoCollection<User> users = database.getCollection("user", User.class);
-		final JSONObject keyJSON = new JSONObject(apiKey);
 
 		//find user based on apiKey
-		Bson filter = eq("APIKey", keyJSON.getInt("APIKey"));
+		Bson filter = eq("APIKey", apiKey);
 
 		//delete from db
 		User deletedUser = users.findOneAndDelete(filter);
