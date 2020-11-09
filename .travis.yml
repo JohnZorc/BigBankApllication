@@ -2,11 +2,9 @@ language: java
 jdk:
 - openjdk8
 before_install:
-- openssl aes-256-cbc -K $encrypted_b076cddc14df_key -iv $encrypted_b076cddc14df_iv
-  -in project.json.enc -out project.json -d
-- openssl aes-256-cbc -K $encrypted_4554e365dc6e_key -iv $encrypted_4554e365dc6e_iv
-  -in PP2-Group-9-9ebbe0ca35d8.json.enc -out PP2-Group-9-9ebbe0ca35d8.json -d
-- chmod +x gradlew
+  - openssl aes-256-cbc -K $encrypted_4554e365dc6e_key -iv $encrypted_4554e365dc6e_iv
+    -in PP2-Group-9-9ebbe0ca35d8.json.enc -out PP2-Group-9-9ebbe0ca35d8.json -d
+  - chmod +x gradlew
 jobs:
   include:
   - stage: build
@@ -19,10 +17,11 @@ jobs:
       --tests CreditCardMinimumPaymentCalculatorTests --tests CCPayoffTest"
   - stage: integration-tests
     script: "./gradlew test --tests BigBankApplicationTest"
+
 deploy:
   provider: gae
-  keyfile: project.json.enc
-  project: pp2-group-9
+  keyfile: "PP2-Group-9-9ebbe0ca35d8.json.enc"
+  project: "pp2-group-9"
   on:
     - master
     - emg-skip-int
