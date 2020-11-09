@@ -8,7 +8,8 @@ public class CreditCardMinimumPaymentCalculator
 
     private static DecimalFormat df = new DecimalFormat("0.00");
 
-    public static JSONObject CreditCardMinimumPaymentCalculator(double CCBalance, double CCInterestRate, double minimumPaymentPercentage) throws Exception
+    public static JSONObject CreditCardMinimumPaymentCalculator(double CCBalance, double CCInterestRate,
+                                                                double minimumPaymentPercentage) throws Exception
     {
         if ( CCBalance <= 0.0 || CCInterestRate <= 0.0 || minimumPaymentPercentage <= 0.0)
         {

@@ -32,7 +32,8 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @SpringBootApplication
 @RestController
-public class BigBankApplication {
+public class BigBankApplication
+{
 
 	public static void main(String[] args) {
 		SpringApplication.run(BigBankApplication.class, args);
@@ -115,7 +116,8 @@ public class BigBankApplication {
 
 		if (APIKeyInterceptor(APIKey))
 		{
-			return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance, CCInterestRate, minimumPaymentPercentage).toString();
+			return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance,
+					CCInterestRate, minimumPaymentPercentage).toString();
 
 		}
 		else
