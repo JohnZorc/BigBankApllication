@@ -23,17 +23,17 @@ deploy:
   keyfile: pp2-group-9-b3e2174de4bd.json.enc
   project: pp2-group-9
   on:
-  - master
-  - emg-skip-int
-  - emg-skip-unit
-  - emg-skip-all
+    - master
+    - emg-skip-int
+    - emg-skip-unit
+    - emg-skip-all
 stages:
-- name: build
-  if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch
-    = emg-skip-int OR branch = build
-- name: unit-tests
-  if: branch = master OR branch = emg-skip-int
-- name: integration-tests
-  if: branch = master OR branch = emg-skip-unit
+  - name: build
+    if: branch = master OR branch = emg-skip-all OR branch = emg-skip-unit OR branch
+      = emg-skip-int OR branch = build
+  - name: unit-tests
+    if: branch = master OR branch = emg-skip-int
+  - name: integration-tests
+    if: branch = master OR branch = emg-skip-unit
 notifications:
   slack: drbyron:gIk54cynDV81nZgojHV3Hgsq
