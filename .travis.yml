@@ -20,7 +20,7 @@ jobs:
 
 deploy:
   provider: gae
-  keyfile: PP2-Group-9-9ebbe0ca35d8.json.enc
+  keyfile: project.json.enc
   project: pp2-group-9
   on:
     - master
