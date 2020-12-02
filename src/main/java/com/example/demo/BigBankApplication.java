@@ -5,7 +5,6 @@ import com.example.demo.schemas.User;
 import com.example.demo.schemas.Customer;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -156,7 +155,7 @@ public class BigBankApplication
 
 	//Receives user data and returns key
 	@PostMapping("/AddKey")
-	public JSONObject AddKey(@RequestBody String entityInfo) {
+	public User AddKey(@RequestBody String entityInfo) {
 
 		//get ip
 		HttpServletRequest request =
@@ -194,13 +193,11 @@ public class BigBankApplication
 			apiKey = -1;
 
 		//recreate into a jsonobject
-		JSONObject response = new JSONObject();
-		response.put("APIKey",apiKey);
-		return response;
+		return newUser;
 	}
 
 	@PostMapping("/register")
-	public JSONObject register(@RequestBody String registerInfo) {
+	public String register(@RequestBody String registerInfo) {
 
 		final JSONObject registerInfoJSON = new JSONObject(registerInfo);
 		MongoCollection<Customer> customers = database.getCollection("customers", Customer.class);
@@ -209,10 +206,28 @@ public class BigBankApplication
 		String lastName = registerInfoJSON.getString("lastName");
 		String emailAddress = registerInfoJSON.getString("emailAddress");
 		String homeAddress = registerInfoJSON.getString("homeAddress");
-		String password = registerInfoJSON.getString("password");
+		String clearTextPassword = registerInfoJSON.getString("password");
 
+		// hash password.
+		int hashedPassword = clearTextPassword.hashCode();
+
+		// create a new customer
+		Customer newCustomer = new Customer(firstName, lastName, emailAddress, homeAddress, hashedPassword);
+
+		// Save it to db.
+		//check if customer already exists, if not -> log new customer and add to db
+		String message;
+		if(customers.find(eq("emailAddress", emailAddress)).first()==null){
+			customers.insertOne(newCustomer);
+			message = "User was successfully created.";
+		} else {
+			message = "A user with this email already exists.";
+		}
+
+		//recreate into a jsonobject
 		JSONObject response = new JSONObject();
-		return response;
+		response.put("message",message);
+		return message;
 	}
 
 	@PostMapping("/login")

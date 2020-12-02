@@ -7,13 +7,13 @@ public class Customer
 
   private ObjectId id;
 
-  private String firstName;
-  private String lastName;
-  private String emailAddress;
-  private String homeAddress;
-  private String password;
+  public String firstName;
+  public String lastName;
+  public String emailAddress;
+  public String homeAddress;
+  public int password;
 
-  public Customer(String firstName, String lastName, String emailAddress, String homeAddress, String password) {
+  public Customer(String firstName, String lastName, String emailAddress, String homeAddress, int password) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.emailAddress = emailAddress;
