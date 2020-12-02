@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.example.demo.schemas.Log;
 import com.example.demo.schemas.User;
+import com.example.demo.schemas.Customer;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerAddress;
@@ -198,8 +199,34 @@ public class BigBankApplication
 		return response;
 	}
 
-	//Receives key and deletes it from DB.
-//	@DeleteMapping("/RevokeKey")
+	@PostMapping("/register")
+	public JSONObject register(@RequestBody String registerInfo) {
+
+		final JSONObject registerInfoJSON = new JSONObject(registerInfo);
+		MongoCollection<Customer> customers = database.getCollection("customers", Customer.class);
+
+		String firstName = registerInfoJSON.getString("firstName");
+		String lastName = registerInfoJSON.getString("lastName");
+		String emailAddress = registerInfoJSON.getString("emailAddress");
+		String homeAddress = registerInfoJSON.getString("homeAddress");
+		String password = registerInfoJSON.getString("password");
+
+		JSONObject response = new JSONObject();
+		return response;
+	}
+
+	@PostMapping("/login")
+	public JSONObject login(@RequestBody String loginInfo) {
+		JSONObject response = new JSONObject();
+		return response;
+	}
+
+	@GetMapping("/dashboard")
+	public String dashboard(@RequestBody String GetString) {
+		return "Hello from the Dashboard page";
+	}
+
+
 	@DeleteMapping(value = "/RevokeKey/{apikey}")
 	public String RevokeKey(@PathVariable("apikey") int apiKey) {
 		MongoCollection<User> users = database.getCollection("user", User.class);
