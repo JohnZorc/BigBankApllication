@@ -6,8 +6,9 @@ big-bank-cfi-suite-sw-testing-team-9 created by GitHub Classroom
 __After compiling the project__, run the following: 
 
 1. `gradle build -x test`
-2. `docker build -t bbapp .`
-3. `docker-compose up`
+2. `docker build -t bbapp -f ./docker/Dockerfile .`
+4. `docker run -p 27017:27017 -d mongo:latest `
+3. `docker run -p 8080:8080 bbap`
 
 ### Vagrant:  
 #### Setting up Vagrant 
