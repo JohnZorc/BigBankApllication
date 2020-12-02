@@ -7,6 +7,10 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import io.fusionauth.jwt.Verifier;
+import io.fusionauth.jwt.domain.JWT;
+import io.fusionauth.jwt.hmac.HMACSigner;
+import io.fusionauth.jwt.hmac.HMACVerifier;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -24,9 +28,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Signer;
 import java.sql.Timestamp;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -54,6 +60,11 @@ public class BigBankApplication
 	MongoDatabase database = mongoClient.getDatabase("big-bank-db"); // Gets db from deamon, creates it if not found.
 
 	MongoCollection<Customer> customers = database.getCollection("customers", Customer.class);
+
+	//JWT Ticket setup
+	String JWTSecret = "cis4930-group9-jtw-secret";
+	// Build an HMAC signer using a SHA-256 hash
+	HMACSigner signer = HMACSigner.newSHA256Signer(JWTSecret);
 
 	@PostMapping("/SimpleSavings")
 	public String SimpleSavings(@RequestBody String SScalc) throws Exception {
@@ -233,7 +244,7 @@ public class BigBankApplication
 	}
 
 	@PostMapping("/login")
-	public boolean login(@RequestBody String loginInfo) {
+	public String login(@RequestBody String loginInfo) {
 		// create JSON from loginInfo
 		final JSONObject obj = new JSONObject(loginInfo);
 
@@ -241,27 +252,37 @@ public class BigBankApplication
 		String email = obj.getString("email");
 		int hashedPassword = obj.getString("password").hashCode();
 
-		System.out.println(email);
-		System.out.println(hashedPassword);
 		// check that they exist in db
-		if(customers.find(
-				and(eq("emailAddress", email), eq("password", hashedPassword)))
-			.first() != null){
 
-			// Get JWT from BAM and return it.
-			return true;
+		if(customers.find(and(eq("emailAddress", email), eq("password", hashedPassword))).first() != null){
+
+			// Build a new JWT with an issuer(iss), issued at(iat), subject(sub) and expiration(exp)
+			JWT jwt = new JWT().setIssuer("www.acme.com")
+					.setIssuedAt(ZonedDateTime.now(ZoneOffset.UTC))
+					.setSubject(email)
+					.setExpiration(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(30));
+
+			// Sign and encode the JWT to a JSON string representation
+			String encodedJWT = JWT.getEncoder().encode(jwt, signer);
+			return encodedJWT;
 		} else {
 			// if they don't return error
-			return false;
+			return "Invalid email/password.";
 		}
 
 	}
 
 	@GetMapping("/dashboard")
-	public String dashboard(@RequestBody String GetString) {
-		return "Hello from the Dashboard page";
-	}
+	public String dashboard(@RequestHeader("Authorization") String token ) {
+		System.out.println(token);
 
+		if(TokenInterceptor(token)){
+			return "Hello from the Dashboard page";
+		} else {
+			return "You do not have access to access this page.";
+		}
+
+	}
 
 	@DeleteMapping(value = "/RevokeKey/{apikey}")
 	public String RevokeKey(@PathVariable("apikey") int apiKey) {
@@ -303,6 +324,30 @@ public class BigBankApplication
 	{
 		MongoCollection<User> users = database.getCollection("user", User.class);
 		return (users.find(eq("APIKey", APIKey)).first()!=null);
+	}
+
+	public boolean TokenInterceptor(String encodedJWT){
+		boolean response = false;
+		try {
+			// Create verifier
+			Verifier verifier = HMACVerifier.newVerifier(JWTSecret);
+
+			// Verify and decode the encoded string JWT to a rich object
+			JWT jwt = JWT.getDecoder().decode(encodedJWT, verifier);
+
+			// Extract email from token
+			String email = jwt.subject;
+
+			// Verify email exists in db.
+			if (customers.find(eq("emailAddress", email)).first() != null) {
+				response = true;
+			}
+		} catch (Exception e){
+			response = false;
+		} finally {
+			return response;
+		}
+
 	}
 
 	public void AddLog(String body, int APIKey, String EndPoint) throws Exception {
