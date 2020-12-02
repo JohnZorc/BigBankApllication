@@ -9,6 +9,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -51,6 +53,7 @@ public class BigBankApplication
 	MongoClient mongoClient = MongoClients.create(settings); // Connects to mongoDB deamon running on port 27017
 	MongoDatabase database = mongoClient.getDatabase("big-bank-db"); // Gets db from deamon, creates it if not found.
 
+	MongoCollection<Customer> customers = database.getCollection("customers", Customer.class);
 
 	@PostMapping("/SimpleSavings")
 	public String SimpleSavings(@RequestBody String SScalc) throws Exception {
@@ -200,7 +203,6 @@ public class BigBankApplication
 	public String register(@RequestBody String registerInfo) {
 
 		final JSONObject registerInfoJSON = new JSONObject(registerInfo);
-		MongoCollection<Customer> customers = database.getCollection("customers", Customer.class);
 
 		String firstName = registerInfoJSON.getString("firstName");
 		String lastName = registerInfoJSON.getString("lastName");
@@ -231,9 +233,28 @@ public class BigBankApplication
 	}
 
 	@PostMapping("/login")
-	public JSONObject login(@RequestBody String loginInfo) {
-		JSONObject response = new JSONObject();
-		return response;
+	public boolean login(@RequestBody String loginInfo) {
+		// create JSON from loginInfo
+		final JSONObject obj = new JSONObject(loginInfo);
+
+		// extract email & password
+		String email = obj.getString("email");
+		int hashedPassword = obj.getString("password").hashCode();
+
+		System.out.println(email);
+		System.out.println(hashedPassword);
+		// check that they exist in db
+		if(customers.find(
+				and(eq("emailAddress", email), eq("password", hashedPassword)))
+			.first() != null){
+
+			// Get JWT from BAM and return it.
+			return true;
+		} else {
+			// if they don't return error
+			return false;
+		}
+
 	}
 
 	@GetMapping("/dashboard")
