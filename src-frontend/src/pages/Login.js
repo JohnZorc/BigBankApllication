@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class LoginScreen extends React.Component {
+export default class Login extends React.Component {
     constructor(props) {
         super(props);
       }
