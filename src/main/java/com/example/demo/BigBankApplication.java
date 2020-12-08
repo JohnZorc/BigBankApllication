@@ -21,11 +21,15 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Signer;
@@ -38,6 +42,7 @@ import java.util.function.Consumer;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+@CrossOrigin(origins = "*")
 @SpringBootApplication
 @RestController
 public class BigBankApplication
@@ -45,6 +50,20 @@ public class BigBankApplication
 
 	public static void main(String[] args) {
 		SpringApplication.run(BigBankApplication.class, args);
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+
+				registry.addMapping("/SimpleSavings").allowedOrigins("http://localhost:3000");
+				registry.addMapping("/MortgageCalculator").allowedOrigins("http://localhost:3000");
+				registry.addMapping("/CCMinCalculator").allowedOrigins("http://localhost:3000");
+				registry.addMapping("/CCPayoffCalculator").allowedOrigins("http://localhost:3000");
+			}
+		};
 	}
 
 	// Setting up DB
@@ -66,6 +85,7 @@ public class BigBankApplication
 	// Build an HMAC signer using a SHA-256 hash
 	HMACSigner signer = HMACSigner.newSHA256Signer(JWTSecret);
 
+
 	@PostMapping("/SimpleSavings")
 	public String SimpleSavings(@RequestBody String SScalc) throws Exception {
 		final JSONObject obj = new JSONObject(SScalc);
@@ -78,17 +98,17 @@ public class BigBankApplication
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( SScalc,  APIKey,  "/SimpleSavings");
-		if (APIKeyInterceptor(APIKey))
-		{
+//		if (APIKeyInterceptor(APIKey))
+//		{
 			final JSONObject testObject = SimpleSavingsCalculator.SSCalculator(deposit,monthly,yearPeriods,interestRate);
 
 			String returnString = testObject.toString();
 			return returnString;
-		}
-		else
-		{
-			return "Invalid API Key";
-		}
+//		}
+//		else
+//		{
+//			return "Invalid API Key";
+//		}
 
 		//Get your JSON object of values from the SSCalculator class
 
@@ -106,14 +126,14 @@ public class BigBankApplication
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( MortCalc,  APIKey,  "/MortgageCalculator");
-		if (APIKeyInterceptor(APIKey))
-		{
+//		if (APIKeyInterceptor(APIKey))
+//		{
 			return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate).toString();
-		}
-		else
-		{
-			return "Invalid API Key";
-		}
+//		}
+//		else
+//		{
+//			return "Invalid API Key";
+//		}
 	}
 
 	@PostMapping("/CCMinCalculator")
@@ -128,16 +148,16 @@ public class BigBankApplication
 		//Log this request
 		AddLog( CreditMin,  APIKey,  "/CCMinCalculator");
 
-		if (APIKeyInterceptor(APIKey))
-		{
+//		if (APIKeyInterceptor(APIKey))
+//		{
 			return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance,
 					CCInterestRate, minimumPaymentPercentage).toString();
 
-		}
-		else
-		{
-			return "Invalid API Key";
-		}
+//		}
+//		else
+//		{
+//			return "Invalid API Key";
+//		}
 	}
 
 	@PostMapping("/CCPayoffCalculator")
@@ -152,18 +172,18 @@ public class BigBankApplication
 		//Log this request
 		AddLog( CreditPayoff,  APIKey,  "/CCPayoffCalculator");
 
-		if (APIKeyInterceptor(APIKey))
-		{
+//		if (APIKeyInterceptor(APIKey))
+//		{
 			//Get your JSON object of values from the SSCalculator class
 			final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
 
 			String returnString = testObject.toString();
 			return returnString;
-		}
-		else
-		{
-			return "Invalid API Key";
-		}
+//		}
+//		else
+//		{
+//			return "Invalid API Key";
+//		}
 
 	}
 
