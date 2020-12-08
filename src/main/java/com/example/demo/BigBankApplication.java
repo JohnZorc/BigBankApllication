@@ -38,6 +38,7 @@ import java.util.function.Consumer;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+@CrossOrigin(origins = "http://localhost:8080/", maxAge = 3600)
 @SpringBootApplication
 @RestController
 public class BigBankApplication
@@ -66,6 +67,7 @@ public class BigBankApplication
 	// Build an HMAC signer using a SHA-256 hash
 	HMACSigner signer = HMACSigner.newSHA256Signer(JWTSecret);
 
+
 	@PostMapping("/SimpleSavings")
 	public String SimpleSavings(@RequestBody String SScalc) throws Exception {
 		final JSONObject obj = new JSONObject(SScalc);
@@ -78,22 +80,23 @@ public class BigBankApplication
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( SScalc,  APIKey,  "/SimpleSavings");
-		if (APIKeyInterceptor(APIKey))
-		{
+//		if (APIKeyInterceptor(APIKey))
+//		{
 			final JSONObject testObject = SimpleSavingsCalculator.SSCalculator(deposit,monthly,yearPeriods,interestRate);
 
 			String returnString = testObject.toString();
 			return returnString;
-		}
-		else
-		{
-			return "Invalid API Key";
-		}
+//		}
+//		else
+//		{
+//			return "Invalid API Key";
+//		}
 
 		//Get your JSON object of values from the SSCalculator class
 
 	}
 
+	@CrossOrigin(origins = "http://localhost:8080")
 	@PostMapping("/MortgageCalculator")
 	public String MortgageCalculator(@RequestBody String MortCalc) throws Exception {
 		final JSONObject obj = new JSONObject(MortCalc);
@@ -106,16 +109,17 @@ public class BigBankApplication
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
 		AddLog( MortCalc,  APIKey,  "/MortgageCalculator");
-		if (APIKeyInterceptor(APIKey))
-		{
+//		if (APIKeyInterceptor(APIKey))
+//		{
 			return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate).toString();
-		}
-		else
-		{
-			return "Invalid API Key";
-		}
+//		}
+//		else
+//		{
+//			return "Invalid API Key";
+//		}
 	}
 
+	@CrossOrigin(origins = "http://localhost:8080")
 	@PostMapping("/CCMinCalculator")
 	public String CreditCardMinCalculator(@RequestBody String CreditMin) throws Exception {
 
@@ -128,18 +132,19 @@ public class BigBankApplication
 		//Log this request
 		AddLog( CreditMin,  APIKey,  "/CCMinCalculator");
 
-		if (APIKeyInterceptor(APIKey))
-		{
+//		if (APIKeyInterceptor(APIKey))
+//		{
 			return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance,
 					CCInterestRate, minimumPaymentPercentage).toString();
 
-		}
-		else
-		{
-			return "Invalid API Key";
-		}
+//		}
+//		else
+//		{
+//			return "Invalid API Key";
+//		}
 	}
 
+	@CrossOrigin(origins = "http://localhost:8080")
 	@PostMapping("/CCPayoffCalculator")
 	public String CCPayoffCalculator(@RequestBody String CreditPayoff) throws Exception {
 		final JSONObject obj = new JSONObject(CreditPayoff);
@@ -152,18 +157,18 @@ public class BigBankApplication
 		//Log this request
 		AddLog( CreditPayoff,  APIKey,  "/CCPayoffCalculator");
 
-		if (APIKeyInterceptor(APIKey))
-		{
+//		if (APIKeyInterceptor(APIKey))
+//		{
 			//Get your JSON object of values from the SSCalculator class
 			final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
 
 			String returnString = testObject.toString();
 			return returnString;
-		}
-		else
-		{
-			return "Invalid API Key";
-		}
+//		}
+//		else
+//		{
+//			return "Invalid API Key";
+//		}
 
 	}
 
