@@ -57,6 +57,7 @@ public class BigBankApplication
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
+
 				registry.addMapping("/SimpleSavings").allowedOrigins("http://localhost:3000");
 				registry.addMapping("/MortgageCalculator").allowedOrigins("http://localhost:3000");
 				registry.addMapping("/CCMinCalculator").allowedOrigins("http://localhost:3000");

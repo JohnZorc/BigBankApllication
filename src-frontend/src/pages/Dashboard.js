@@ -172,10 +172,15 @@ export default function Dashboard(props)  {
                                         {/* {errors.age && errors.age.message} */}
                                     </span>
 
-                                        <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center"}}/>
+                                        <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center",marginBottom:25}}/>
                                 </form>
 
-                                {ccMinResults!="" ? <p>{ccMinResults}</p> : null}
+                                {ccMinResults!=="" ? <div><strong>Calculations</strong> 
+                                                        <p><strong>Estimated Monthly Payment: </strong>${ccMinResults.monthlyPayment}</p> 
+                                                        <p><strong>Estimated Months Needed: </strong>{ccMinResults.months}</p> 
+                                                        <p><strong>Estimated Total Amount Paid: </strong>${ccMinResults.totalAmountPaid}</p>
+                                                    </div> 
+                                : null}
 
                             </div>
 
@@ -204,10 +209,16 @@ export default function Dashboard(props)  {
                                         <input name="interest" type="number" step="0.01" ref={register2({ })} style={{marginRight:10}}/>
                                     </span>
 
-                                        <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center"}}/>
+                                        <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center",marginBottom:25}}/>
                                 </form>
 
-                                {mortCalcResults!="" ? <p>{mortCalcResults}</p> : null}
+                                {mortCalcResults!=="" ? <div><strong>Calculations</strong> 
+                                                        <p><strong>Estimated Monthly Payment: </strong>{mortCalcResults.monthlyPayment}</p> 
+                                                        <p><strong>Estimated Paid in Principle: </strong>{mortCalcResults.amountPainInPrinciple}</p> 
+                                                        <p><strong>Estimated Paid in Interest: </strong>{mortCalcResults.amountPaidInInterest}</p>
+                                                        <p><strong>Estimated Total Amount Paid: </strong>{mortCalcResults.totalAmountPaid}</p>
+                                                    </div> 
+                                : null}
 
                             </div>
 
@@ -232,10 +243,15 @@ export default function Dashboard(props)  {
                                         {/* {errors.age && errors.age.message} */}
                                     </span>
 
-                                        <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center"}}/>
+                                        <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center",marginBottom:25}}/>
                                 </form>
 
-                                {ccPayResults!="" ? <p>{ccPayResults}</p> : null}
+                                {ccPayResults!=="" ? <div><strong>Calculations</strong> 
+                                                        <p><strong>Estimated Monthly Payment: </strong>{ccPayResults.MonthlyPayment}</p> 
+                                                        <p><strong>Estimated Total Interest Paid: </strong>{ccPayResults.CCTotalInterest}</p> 
+                                                        <p><strong>Estimated Total Balance Paid: </strong>{ccPayResults.CCTotalBalance}</p>
+                                                    </div> 
+                                : null}
 
                             </div>
 
@@ -264,10 +280,15 @@ export default function Dashboard(props)  {
                                         {/* {errors.age && errors.age.message} */}
                                     </span>
 
-                                        <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center"}}/>
+                                        <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center",marginBottom:25}}/>
                                 </form>
 
-                                {simpSavResults!="" ? <p>{simpSavResults}</p> : null}
+                                {simpSavResults!=="" ? <div><strong>Calculations</strong> 
+                                                        <p><strong>Estimated Total Savings: </strong>${simpSavResults.TotalSavings}</p> 
+                                                        <p><strong>Estimated Total Interest Earned: </strong>${simpSavResults.TotalInterestEarned}</p> 
+                                                        <p><strong>Estimated Total Contributions: </strong>${simpSavResults.TotalContributions}</p>
+                                                    </div> 
+                                : null}
 
                             </div>
 
