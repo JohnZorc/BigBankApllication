@@ -21,11 +21,15 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Signer;
@@ -38,7 +42,7 @@ import java.util.function.Consumer;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-@CrossOrigin(origins = "http://localhost:8080/", maxAge = 3600)
+@CrossOrigin(origins = "*")
 @SpringBootApplication
 @RestController
 public class BigBankApplication
@@ -46,6 +50,19 @@ public class BigBankApplication
 
 	public static void main(String[] args) {
 		SpringApplication.run(BigBankApplication.class, args);
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/SimpleSavings").allowedOrigins("http://localhost:3000");
+				registry.addMapping("/MortgageCalculator").allowedOrigins("http://localhost:3000");
+				registry.addMapping("/CCMinCalculator").allowedOrigins("http://localhost:3000");
+				registry.addMapping("/CCPayoffCalculator").allowedOrigins("http://localhost:3000");
+			}
+		};
 	}
 
 	// Setting up DB
@@ -96,7 +113,6 @@ public class BigBankApplication
 
 	}
 
-	@CrossOrigin(origins = "http://localhost:8080")
 	@PostMapping("/MortgageCalculator")
 	public String MortgageCalculator(@RequestBody String MortCalc) throws Exception {
 		final JSONObject obj = new JSONObject(MortCalc);
@@ -119,7 +135,6 @@ public class BigBankApplication
 //		}
 	}
 
-	@CrossOrigin(origins = "http://localhost:8080")
 	@PostMapping("/CCMinCalculator")
 	public String CreditCardMinCalculator(@RequestBody String CreditMin) throws Exception {
 
@@ -144,7 +159,6 @@ public class BigBankApplication
 //		}
 	}
 
-	@CrossOrigin(origins = "http://localhost:8080")
 	@PostMapping("/CCPayoffCalculator")
 	public String CCPayoffCalculator(@RequestBody String CreditPayoff) throws Exception {
 		final JSONObject obj = new JSONObject(CreditPayoff);

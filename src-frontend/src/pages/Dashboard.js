@@ -42,8 +42,8 @@ export default function Dashboard(props)  {
 
 
     const onCCMinSubmit = async (data) => {
-        axios.post(`http://localhost:8080/CCMinCalculator/`, 
-        {   
+        axios.post(`http://localhost:8080/CCMinCalculator`,
+        {
             CCBalance:data.ccBalance,
             CCInterestRate:data.ccInterest,
             minimumPaymentPercentage: data.minPayPercent,
