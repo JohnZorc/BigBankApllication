@@ -21,36 +21,38 @@ export default function Dashboard(props)  {
         //     setCCMinResults(res.data);
         // })
 
-        
+
     }
 
     return(
-        <div>
-            <h3>Create Account</h3>
-            <form onSubmit={handleSubmit(onSubmit)} style={{display:"flex",flexDirection:"column", rowGap:15, alignItems:"flex-start"}}>
+        <div style={{display:"flex", flexDirection:"column", alignItems:"center"}}>
+            <h1 style={{marginTop:50}}>Create Account</h1>
+            <form onSubmit={handleSubmit(onSubmit)} style={{display:"flex",flexDirection:"column", rowGap:20, alignItems:"flex-start"}}>
                 <span>
-                    <label style={{marginRight:10}}>Initial Deposit</label>
-                    <input name="initDeposit" type="number" step="0.01" ref={register({})} style={{marginRight:10}}/>
+                    <label style={{marginRight:10}}>Description</label>
+                    <input name="description" type="text" ref={register({})} style={{marginRight:10}}/>
                 </span>
 
                 <span>    
-                    <label style={{marginRight:10}}>Monthly Contribution</label>
-                    <input name="monthlyContri" type="number" step="0.01" ref={register({  })} style={{marginRight:10}}/>
+                    <label style={{marginRight:10}}>Account Type</label>
+                    <select name="acc_type" ref={register({  })} style={{marginRight:10}}>
+                        <option value="checking">Checking</option>
+                        <option value="savings">Savings</option>
+                        <option value="money-market">Money-market</option>
+                        <option value="credit-card">Credit-card</option>
+                        <option value="loan">Loan</option>
+                        <option value="liability">Liability</option>
+                    </select>
                 </span>
 
                 <span>    
-                    <label style={{marginRight:10}}>Period (in years)</label>
-                    <input name="period" type="number" step="0.01" ref={register({})} style={{marginRight:10}}/>
+                    <label style={{marginRight:10}}>Starting Balance</label>
+                    <label>$</label>
+                    <input name="start_balance" type="number" step="0.01" ref={register({})} style={{marginRight:10}}/>
                     {/* {errors.age && errors.age.message} */}
                 </span>
 
-                <span>    
-                    <label style={{marginRight:10}}>Simple Yearly Interest Rate (APY)</label>
-                    <input name="apy" type="number" step="0.01" ref={register({})} style={{marginRight:10}}/>
-                    {/* {errors.age && errors.age.message} */}
-                </span>
-
-                    <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center",marginBottom:25}}/>
+                    <input type="submit" value="Create New Account" style={{alignSelf:"center",marginTop:20,marginBottom:25}}/>
             </form>
         </div>
     )
