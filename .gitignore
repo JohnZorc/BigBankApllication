@@ -13,6 +13,9 @@ build/
 .springBeans
 .sts4-cache
 
+###React###
+.eslintcache
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

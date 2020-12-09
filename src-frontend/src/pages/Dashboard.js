@@ -4,9 +4,24 @@ import axios from 'axios';
 
 export default function Dashboard(props)  {
 
+    React.useEffect(() => {
+
+        axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.location.token}})
+            .then(res => {
+                if(res.data=="You do not have access to access this page."){
+                    console.log(props.location.token);
+                    props.history.push({pathname: '/login'});
+                }
+            })
+    });
+
+    const [ccMinResults,setCCMinResults] = React.useState("");
+    const [mortCalcResults,setmortCalcResults] = React.useState("");
+    const [ccPayResults,setccPayResults] = React.useState("");
+    const [simpSavResults,setsimpSavResults] = React.useState(""); 
+    const is_admin = false;
     //need to get API Key, username from login
     
-    const is_admin = false;
     const { register, errors, handleSubmit } = useForm({
         mode: "onBlur"
       });
@@ -35,14 +50,8 @@ export default function Dashboard(props)  {
         mode: "onBlur"
       });
 
-    const [ccMinResults,setCCMinResults] = React.useState("");
-    const [mortCalcResults,setmortCalcResults] = React.useState("");
-    const [ccPayResults,setccPayResults] = React.useState("");
-    const [simpSavResults,setsimpSavResults] = React.useState(""); 
-
-
     const onCCMinSubmit = async (data) => {
-        axios.post(`http://localhost:8080/CCMinCalculator`,
+        axios.post(`http://localhost:8080/CCMinCalculator/`,
         {
             CCBalance:data.ccBalance,
             CCInterestRate:data.ccInterest,
@@ -106,23 +115,33 @@ export default function Dashboard(props)  {
 
         <div>
 
-            {is_admin ? 
+            {
+            // props.email===null ? <Redirect to="/login" />
+            
+            // :
+
+            is_admin ? 
 
                 <div style={{display:"flex", flexDirection:"column",alignItems:"flex-start",marginLeft:30, marginBottom:70}}>
                     <h1>BAMS Transactions LOGS</h1>
+                    {/* Loop through the logs */}
                 </div>
             
             :
 
                 <div style={{display:"flex", flexDirection:"column", marginBottom:70}}>
                     <div className="header" style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", alignItems:"center",marginRight:30}}>
-                        <h3>Username</h3>
-                        <button style={{marginLeft:25,maxHeight:25}}>Log Out</button>
+                        <h3>{props.location.email}</h3>
+                        <button style={{marginLeft:25,maxHeight:25}} onClick={(e)=>props.history.push({pathname: '/login'})}>Log Out</button>
                     </div>
 
                     <div className="row_container" style={{display:"flex", flexDirection:"row"}}>
                         <div className="accounts" style={{display:"flex", flex:1, flexDirection:"column", alignItems:"center", marginLeft:30}}>
-                            <h1 style={{marginLeft:-40}}>Accounts <span> <button>Deposit</button> </span> </h1>
+                            <h1 style={{marginLeft:-40}}>Accounts 
+                                <span> 
+                                    <button style={{marginLeft:20}}onClick={(e)=>props.history.push({pathname: '/deposit'})}>Deposit</button> 
+                                </span> 
+                            </h1>
                             {/* We will use this grid div in a loop within a column flex div */}
                             <div style={{display:"grid",gridTemplateColumns:"50% 50%",gridTemplateRows:"auto",marginBottom:25}}>
                                 
@@ -142,8 +161,8 @@ export default function Dashboard(props)  {
                                 <p>$1000.00</p>
 
                             </div>
-                            <button style={{marginBottom:30}}>Create New Account</button>
-                            <button>Transfer Funds</button>
+                            <button style={{marginBottom:30}} onClick={(e)=>props.history.push({pathname: '/new_account'})}>Create New Account</button>
+                            <button onClick={(e)=>props.history.push({pathname: '/transfer'})}>Transfer Funds</button>
                             
                         </div>
 
