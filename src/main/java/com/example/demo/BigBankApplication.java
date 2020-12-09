@@ -52,17 +52,17 @@ public class BigBankApplication
 		SpringApplication.run(BigBankApplication.class, args);
 	}
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-
-				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
-
-			}
-		};
-	}
+//	@Bean
+//	public WebMvcConfigurer corsConfigurer() {
+//		return new WebMvcConfigurer() {
+//			@Override
+//			public void addCorsMappings(CorsRegistry registry) {
+//
+//				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+//
+//			}
+//		};
+//	}
 
 	// Setting up DB
 	ConnectionString connectionString = new ConnectionString("mongodb://myUserAdmin:pp29softTest@35.188.134.30:27017/");
