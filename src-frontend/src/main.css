@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+}
+.backgroundStyles  {
+    minHeight: 100% ;
+    minWidth: 1024px ;
+    width: 100% ;
+    height: auto ;
+    position: fixed ;
+    top: 0 ;
+    left: 0 ;
+}
