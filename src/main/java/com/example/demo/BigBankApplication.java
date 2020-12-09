@@ -247,10 +247,19 @@ public class BigBankApplication
 
 		// Save it to db.
 		//check if customer already exists, if not -> log new customer and add to db
-		String message;
+		String message = "";
+		String token ="";
 		if(customers.find(eq("emailAddress", emailAddress)).first()==null){
 			customers.insertOne(newCustomer);
 			message = "User was successfully created.";
+			// Build a new JWT with an issuer(iss), issued at(iat), subject(sub) and expiration(exp)
+			JWT jwt = new JWT().setIssuer("www.acme.com")
+					.setIssuedAt(ZonedDateTime.now(ZoneOffset.UTC))
+					.setSubject(emailAddress)
+					.setExpiration(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(30));
+
+			// Sign and encode the JWT to a JSON string representation
+			token = JWT.getEncoder().encode(jwt, signer);
 		} else {
 			message = "A user with this email already exists.";
 		}
@@ -258,7 +267,8 @@ public class BigBankApplication
 		//recreate into a jsonobject
 		JSONObject response = new JSONObject();
 		response.put("message",message);
-		return message;
+		response.put("token",token);
+		return response.toString();
 	}
 
 	@PostMapping("/login")
@@ -292,8 +302,8 @@ public class BigBankApplication
 
 	@GetMapping("/dashboard")
 	public String dashboard(@RequestHeader("Authorization") String token ) {
-		System.out.println(token);
-
+//		final JSONObject obj = new JSONObject(token);
+//		obj.getString("token")
 		if(TokenInterceptor(token)){
 			return "Hello from the Dashboard page";
 		} else {

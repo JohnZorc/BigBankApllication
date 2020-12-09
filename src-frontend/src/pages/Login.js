@@ -7,42 +7,42 @@ import Redirect from "react-router-dom/es/Redirect";
 import styles from "../styles";
 import '../main.css'
 
-function Login() {
+function Login(props) {
 
-        const [form, setForm] = React.useState({
-               email: '',
-               password: ''
-            });
-            const [registrationStatus, setRegistrationStatus] = React.useState(false);
+    const [form, setForm] = React.useState({
+            email: '',
+            password: ''
+        });
+    // const [registrationStatus, setRegistrationStatus] = React.useState(false);
 
-                const handleChange = (e, data) => {
-                    let name, value;
-                    if(data){
-                        name = data.name;
-                        value = data.value;
-                    } else {
-                        name = e.target.name;
-                        value = e.target.value;
-                    }
+        const handleChange = (e, data) => {
+            let name, value;
+            if(data){
+                name = data.name;
+                value = data.value;
+            } else {
+                name = e.target.name;
+                value = e.target.value;
+            }
 
-                    setForm({...form, [name]: value});
-                };
-                const handleSubmit = (e) => {
-                    e.preventDefault();
-                    axios.post(`http://localhost:8080/login`, form)
-                        .then(() => {
-                            alert("User was successfully created");
-                            setRegistrationStatus(true);
-                        })
-                        .catch(() => {
-                            alert("An error occurred while logging in!");
-                            setRegistrationStatus(false);
-                        })
-                };
+            setForm({...form, [name]: value});
+        };
+        const handleSubmit = (e) => {
+            e.preventDefault();
+            axios.post(`http://localhost:8080/login`, form)
+                .then(res => {
+                    props.history.push({pathname: '/dashboard',email:form.email,token:res.data})
+                    // setRegistrationStatus(true);
+                })
+                .catch(() => {
+                    alert("An error occurred while logging in!");
+                    // setRegistrationStatus(false);
+                })
+        };
 
-                if(registrationStatus){
-                        return (<Redirect to={'/Dashboard'}/>)
-                    }
+        // if(registrationStatus){
+        //         return (props.history.push({pathname: '/dashboard',email:form.email}))
+        //     }
 
         return(
             <Container style ={styles.container}>
@@ -64,11 +64,13 @@ function Login() {
                                     </Form>
                                 </Card.Description>
 
-                                <div style={styles.buttons}>
+                                <div style={{marginTop:20,marginBottom:20}}>
+                                    <Button color={'blue'} style={styles.button} onClick={handleSubmit}>Login</Button>
+                                </div>
+                                <div>
                                     <Link to={'/register'}>
                                         <Button color={'red'} style={styles.button}>Register</Button>
                                     </Link>
-                                        <Button color={'blue'} style={styles.button} onClick={handleSubmit}>Submit</Button>
                                 </div>
                             </Card.Content>
                         </Card>

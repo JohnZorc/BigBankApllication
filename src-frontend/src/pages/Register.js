@@ -5,7 +5,7 @@ import { Button, Card } from 'semantic-ui-react'
 import axios from 'axios'
 import { Redirect } from "react-router-dom";
 
-function Register() {
+function Register(props) {
     // States
     const [form, setForm] = React.useState({
        firstName: '',
@@ -15,7 +15,7 @@ function Register() {
        password2: '',
        homeAddress:''
     });
-    const [registrationStatus, setRegistrationStatus] = React.useState(false);
+    // const [registrationStatus, setRegistrationStatus] = React.useState(false);
 
     const handleChange = (e, data) => {
         let name, value;
@@ -34,13 +34,18 @@ function Register() {
         {
         e.preventDefault();
         axios.post(`http://localhost:8080/register`,form)
-            .then(() => {
-                alert("User was successfully created");
-                setRegistrationStatus(true);
+            .then(res => {
+                // setRegistrationStatus(true);
+                if(res.data.token===""){
+                    alert(res.data.message);
+                }else{
+                    // alert("User was successfully created");
+                    props.history.push({pathname: '/dashboard',email:form.emailAddress,token:res.data.token});
+                }
             })
             .catch(() => {
                 alert("An error occurred while registering!");
-                setRegistrationStatus(false);
+                // setRegistrationStatus(false);
             })
         }
         else if (form.password.length >=8)
@@ -55,9 +60,9 @@ function Register() {
 
 
     // Conditional Rendering
-    if(registrationStatus){
-        return (<Redirect to={'/Login'}/>)
-    }
+    // if(registrationStatus){
+    //     return(props.history.push({pathname: '/dashboard',email:form.emailAddress}))
+    // }
 
     return (
         <Container>
@@ -96,7 +101,7 @@ function Register() {
                         </Form>
                     </Card.Description>
 
-                    <div>
+                    <div style={{marginTop:20}}>
                         <Link to={'/'}>
                             <Button color={'red'}>Back</Button>
                         </Link>
