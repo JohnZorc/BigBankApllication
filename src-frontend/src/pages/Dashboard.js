@@ -6,11 +6,10 @@ export default function Dashboard(props)  {
 
     React.useEffect(() => {
 
-        axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.location.token}})
+        axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
             .then(res => {
-                if(res.data=="You do not have access to access this page."){
-                    console.log(props.location.token);
-                    props.history.push({pathname: '/login'});
+                if(res.data==="You do not have access to access this page."){
+                    props.history.replace({pathname: '/login'});
                 }
             })
     });
@@ -20,7 +19,6 @@ export default function Dashboard(props)  {
     const [ccPayResults,setccPayResults] = React.useState("");
     const [simpSavResults,setsimpSavResults] = React.useState(""); 
     const is_admin = false;
-    //need to get API Key, username from login
     
     const { register, errors, handleSubmit } = useForm({
         mode: "onBlur"
@@ -56,7 +54,7 @@ export default function Dashboard(props)  {
             CCBalance:data.ccBalance,
             CCInterestRate:data.ccInterest,
             minimumPaymentPercentage: data.minPayPercent,
-            APIKey:312736
+            APIKey:props.customer.APIKey
         })
             .then(res => {
             console.log(res.data);
@@ -71,7 +69,7 @@ export default function Dashboard(props)  {
             downPaymentAsPercent:data.downPayPercent,
             loanLength: data.years,
             interestRate: data.interest,
-            APIKey:312736
+            APIKey:props.customer.APIKey
         })
             .then(res => {
             console.log(res.data);
@@ -86,7 +84,7 @@ export default function Dashboard(props)  {
             CCBalance:data.ccBalance,
             CCInterest:data.ccInterest,
             Months: data.months,
-            APIKey:312736
+            APIKey:props.customer.APIKey
         })
             .then(res => {
             console.log(res.data);
@@ -102,7 +100,7 @@ export default function Dashboard(props)  {
             monthly:data.monthlyContri,
             yearPeriods: data.period,
             interestRate: data.apy,
-            APIKey:312736
+            APIKey:props.customer.APIKey
         })
             .then(res => {
             console.log(res.data);
@@ -116,22 +114,25 @@ export default function Dashboard(props)  {
         <div>
 
             {
-            // props.email===null ? <Redirect to="/login" />
-            
-            // :
-
             is_admin ? 
 
                 <div style={{display:"flex", flexDirection:"column",alignItems:"flex-start",marginLeft:30, marginBottom:70}}>
+                    <div className="header" style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", alignItems:"center",marginRight:30}}>
+                        <h3>Welcome back, {props.customer.firstName}</h3>
+                        <button style={{marginLeft:25,maxHeight:25}} onClick={(e)=>props.history.push({pathname: '/login'})}>Log Out</button>
+                    </div>
                     <h1>BAMS Transactions LOGS</h1>
                     {/* Loop through the logs */}
+                    {/* <h4>
+                        
+                    </h4> */}
                 </div>
             
             :
 
                 <div style={{display:"flex", flexDirection:"column", marginBottom:70}}>
                     <div className="header" style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", alignItems:"center",marginRight:30}}>
-                        <h3>{props.location.email}</h3>
+                        <h3>Welcome back, {props.customer.firstName}</h3>
                         <button style={{marginLeft:25,maxHeight:25}} onClick={(e)=>props.history.push({pathname: '/login'})}>Log Out</button>
                     </div>
 
@@ -139,7 +140,7 @@ export default function Dashboard(props)  {
                         <div className="accounts" style={{display:"flex", flex:1, flexDirection:"column", alignItems:"center", marginLeft:30}}>
                             <h1 style={{marginLeft:-40}}>Accounts 
                                 <span> 
-                                    <button style={{marginLeft:20}}onClick={(e)=>props.history.push({pathname: '/deposit'})}>Deposit</button> 
+                                    <button style={{marginLeft:20}}onClick={(e)=>props.history.push({pathname: '/deposit',token:props.location.token})}>Deposit</button> 
                                 </span> 
                             </h1>
                             {/* We will use this grid div in a loop within a column flex div */}
@@ -161,8 +162,8 @@ export default function Dashboard(props)  {
                                 <p>$1000.00</p>
 
                             </div>
-                            <button style={{marginBottom:30}} onClick={(e)=>props.history.push({pathname: '/new_account'})}>Create New Account</button>
-                            <button onClick={(e)=>props.history.push({pathname: '/transfer'})}>Transfer Funds</button>
+                            <button style={{marginBottom:30}} onClick={(e)=>props.history.push({pathname: '/new_account',token:props.location.token})}>Create New Account</button>
+                            <button onClick={(e)=>props.history.push({pathname: '/transfer',token:props.location.token})}>Transfer Funds</button>
                             
                         </div>
 
