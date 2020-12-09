@@ -3,46 +3,47 @@ import {Link} from "react-router-dom";
 import {Container, Form} from 'semantic-ui-react'
 import { Button, Card } from 'semantic-ui-react'
 import axios from 'axios'
-import Redirect from "react-router-dom/es/Redirect";
 import styles from "../styles";
 import '../main.css'
 
 function Login(props) {
-
+    
     const [form, setForm] = React.useState({
             email: '',
             password: ''
         });
-    // const [registrationStatus, setRegistrationStatus] = React.useState(false);
 
-        const handleChange = (e, data) => {
-            let name, value;
-            if(data){
-                name = data.name;
-                value = data.value;
-            } else {
-                name = e.target.name;
-                value = e.target.value;
-            }
+    const handleChange = (e, data) => {
+        let name, value;
+        if(data){
+            name = data.name;
+            value = data.value;
+        } else {
+            name = e.target.name;
+            value = e.target.value;
+        }
 
-            setForm({...form, [name]: value});
+        setForm({...form, [name]: value});
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios.post(`http://localhost:8080/login`, form)
+            .then(res => {
+                if(res.data==="Invalid email/password."){
+                    alert(res.data)
+                }else{
+                    // props.setToken(res.data.token);
+                    props.setToken(res.data);
+                    // props.setCustomer({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName});
+                    props.setCustomer({firstName:"res.data.firstName",APIKey:34534523});
+
+                    props.history.push({pathname: '/dashboard'});
+                }
+            })
+            .catch(() => {
+                alert("An error occurred while logging in!");
+            })
         };
-        const handleSubmit = (e) => {
-            e.preventDefault();
-            axios.post(`http://localhost:8080/login`, form)
-                .then(res => {
-                    props.history.push({pathname: '/dashboard',email:form.email,token:res.data})
-                    // setRegistrationStatus(true);
-                })
-                .catch(() => {
-                    alert("An error occurred while logging in!");
-                    // setRegistrationStatus(false);
-                })
-        };
-
-        // if(registrationStatus){
-        //         return (props.history.push({pathname: '/dashboard',email:form.email}))
-        //     }
 
         return(
             <Container style ={styles.container}>
