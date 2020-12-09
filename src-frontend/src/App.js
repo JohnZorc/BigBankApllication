@@ -20,8 +20,6 @@ function App() {
           <Route exact path="/new_account" render={(props)=> <CreateAcc {...props}/>}/>
           <Route exact path="/transfer" render={(props)=> <Transfer {...props}/>}/>
           <Route exact path="/">
-              {/* <Redirect to="/login" />  */}
-              {/* <Redirect to="/deposit" /> */}
               <Redirect to="/dashboard" />
 
           </Route>
