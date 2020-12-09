@@ -58,10 +58,8 @@ public class BigBankApplication
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 
-				registry.addMapping("/SimpleSavings").allowedOrigins("http://localhost:3000");
-				registry.addMapping("/MortgageCalculator").allowedOrigins("http://localhost:3000");
-				registry.addMapping("/CCMinCalculator").allowedOrigins("http://localhost:3000");
-				registry.addMapping("/CCPayoffCalculator").allowedOrigins("http://localhost:3000");
+				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+
 			}
 		};
 	}
