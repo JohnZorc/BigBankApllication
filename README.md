@@ -21,10 +21,19 @@ Starts the virtual machine and runs the vagrantfile
 ##### Vagrant ssh 
 Use to log into your vitual machine.
 
-##### Running Tests
-All of the tests will be included in a tests folder. Navigate to the test folder and compile the test file you wish to run using javac, then run that test file using the java command. 
 
-## Link to deployed application:
-http://35.193.68.187:8080/
+## Continous Integration:
+Our CI pipeline uses **GitHub Actions** and has the following jobs:
+
+1. Build
+2. Unit Test
+3. Integration Test
+4. End-to-End Test
+
+After the commit passes through the pipeline, it is added to our staging environment.
+Our staging environment is the master branch of our project.
 
 
+## Link to deployed Apps:
+frontend: 
+backend: 
