@@ -4,7 +4,10 @@ big-bank-cfi-suite-sw-testing-team-9 created by GitHub Classroom
 ## Execution instructions:
 ### Docker:
 
-From the project root, run `docker-compose up` and the project will run locally on port 8080.
+From the project root, run `docker-compose up` and the project modules will start in the following ports:
+- frontend `3000`
+- backend `8080`
+- database `27017`
 
 ### Vagrant:  
 #### Setting up Vagrant 
