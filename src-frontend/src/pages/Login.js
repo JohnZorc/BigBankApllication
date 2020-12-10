@@ -3,7 +3,6 @@ import {Link} from "react-router-dom";
 import {Container, Form} from 'semantic-ui-react'
 import { Button, Card } from 'semantic-ui-react'
 import axios from 'axios'
-import Redirect from "react-router-dom/es/Redirect";
 import styles from "../styles";
 import '../main.css'
 
@@ -13,36 +12,41 @@ function Login(props) {
             email: '',
             password: ''
         });
-    // const [registrationStatus, setRegistrationStatus] = React.useState(false);
 
-        const handleChange = (e, data) => {
-            let name, value;
-            if(data){
-                name = data.name;
-                value = data.value;
-            } else {
-                name = e.target.name;
-                value = e.target.value;
-            }
+    const handleChange = (e, data) => {
+        let name, value;
+        if(data){
+            name = data.name;
+            value = data.value;
+        } else {
+            name = e.target.name;
+            value = e.target.value;
+        }
 
-            setForm({...form, [name]: value});
-        };
-        const handleSubmit = (e) => {
-            e.preventDefault();
+        setForm({...form, [name]: value});
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if(form.email==="admin"&&form.password==="admin"){
+            props.history.push({pathname: '/dashboard',is_admin:true});
+        }else{
             axios.post(`http://localhost:8080/login`, form)
-                .then(res => {
-                    props.history.push({pathname: '/dashboard',email:form.email,token:res.data})
-                    // setRegistrationStatus(true);
-                })
-                .catch(() => {
-                    alert("An error occurred while logging in!");
-                    // setRegistrationStatus(false);
-                })
-        };
+            .then(res => {
+                if(res.data==="Invalid email/password."){
+                    alert(res.data)
+                }else{
+                    props.setToken(res.data.token);
+                    props.setCustomer({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName});
 
-        // if(registrationStatus){
-        //         return (props.history.push({pathname: '/dashboard',email:form.email}))
-        //     }
+                    props.history.push({pathname: '/dashboard'});
+                }
+            })
+            .catch(() => {
+                alert("An error occurred while logging in!");
+            })
+        }
+        
+        };
 
         return(
             <Container style ={styles.container}>

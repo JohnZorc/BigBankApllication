@@ -3,9 +3,9 @@ import {Link} from "react-router-dom";
 import {Container, Form} from 'semantic-ui-react'
 import { Button, Card } from 'semantic-ui-react'
 import axios from 'axios'
-import { Redirect } from "react-router-dom";
 
 function Register(props) {
+
     // States
     const [form, setForm] = React.useState({
        firstName: '',
@@ -15,7 +15,6 @@ function Register(props) {
        password2: '',
        homeAddress:''
     });
-    // const [registrationStatus, setRegistrationStatus] = React.useState(false);
 
     const handleChange = (e, data) => {
         let name, value;
@@ -35,17 +34,18 @@ function Register(props) {
         e.preventDefault();
         axios.post(`http://localhost:8080/register`,form)
             .then(res => {
-                // setRegistrationStatus(true);
                 if(res.data.token===""){
                     alert(res.data.message);
                 }else{
-                    // alert("User was successfully created");
-                    props.history.push({pathname: '/dashboard',email:form.emailAddress,token:res.data.token});
+                    props.setToken(res.data.token);
+                    // props.setToken(res.data);
+                    props.setCustomer({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName});
+                    // props.setCustomer({firstName:res.data.firstName,APIKey:34534523});                    
+                    props.history.push({pathname: '/dashboard'});
                 }
             })
             .catch(() => {
                 alert("An error occurred while registering!");
-                // setRegistrationStatus(false);
             })
         }
         else if (form.password.length >=8)
@@ -58,11 +58,6 @@ function Register(props) {
         }
     };
 
-
-    // Conditional Rendering
-    // if(registrationStatus){
-    //     return(props.history.push({pathname: '/dashboard',email:form.emailAddress}))
-    // }
 
     return (
         <Container>

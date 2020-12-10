@@ -54,6 +54,8 @@ export default function Dashboard(props)  {
 
                     <input type="submit" value="Create New Account" style={{alignSelf:"center",marginTop:20,marginBottom:25}}/>
             </form>
+            {/* <button onClick={(e)=>props.history.push({pathname: '/dashboard',token:props.location.token})}>Back</button> */}
+
         </div>
     )
 

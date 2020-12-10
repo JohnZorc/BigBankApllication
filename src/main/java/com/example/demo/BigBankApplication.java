@@ -48,7 +48,8 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @RestController
 public class BigBankApplication
 {
-
+	String BAMStoken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2Y" +
+			"iOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ";
 	public static void main(String[] args) {
 		SpringApplication.run(BigBankApplication.class, args);
 	}
@@ -77,8 +78,19 @@ public class BigBankApplication
 	MongoClient mongoClient = MongoClients.create(settings); // Connects to mongoDB deamon running on port 27017
 	MongoDatabase database = mongoClient.getDatabase("big-bank-db"); // Gets db from deamon, creates it if not found.
 
-	MongoCollection<Customer> customers = database.getCollection("customers", Customer.class);
+	ConnectionString connectionString2 = new ConnectionString("mongodb://myUserAdmin:pp29softTest@35.188.134.30:27017/");
+	CodecRegistry pojoCodecRegistry2 = fromRegistries(
+			MongoClientSettings.getDefaultCodecRegistry(),
+			fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+	MongoClientSettings settings2 = MongoClientSettings.builder()
+			.applyConnectionString(connectionString)
+			.codecRegistry(pojoCodecRegistry)
+			.build();
+	MongoClient mongoClient2 = MongoClients.create(settings); // Connects to mongoDB deamon running on port 27017
+	MongoDatabase database2 = mongoClient.getDatabase("big-bank-db"); // Gets db from deamon, creates it if not found.
 
+	MongoCollection<Customer> customers = database.getCollection("customers", Customer.class);
+	MongoCollection<Log> BAMLogs = database2.getCollection("logs", Log.class);
 	//JWT Ticket setup
 	String JWTSecret = "cis4930-group9-jtw-secret";
 	// Build an HMAC signer using a SHA-256 hash
@@ -96,18 +108,18 @@ public class BigBankApplication
 		double interestRate = obj.getDouble("interestRate");
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
-		AddLog( SScalc,  APIKey,  "/SimpleSavings");
-//		if (APIKeyInterceptor(APIKey))
-//		{
+		//AddLog( SScalc,  APIKey,  "/SimpleSavings");
+		if (APIKeyInterceptor(APIKey))
+		{
 			final JSONObject testObject = SimpleSavingsCalculator.SSCalculator(deposit,monthly,yearPeriods,interestRate);
 
 			String returnString = testObject.toString();
 			return returnString;
-//		}
-//		else
-//		{
-//			return "Invalid API Key";
-//		}
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
 
 		//Get your JSON object of values from the SSCalculator class
 
@@ -124,15 +136,15 @@ public class BigBankApplication
 		double interestRate = obj.getDouble("interestRate");
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
-		AddLog( MortCalc,  APIKey,  "/MortgageCalculator");
-//		if (APIKeyInterceptor(APIKey))
-//		{
+		//AddLog( MortCalc,  APIKey,  "/MortgageCalculator");
+		if (APIKeyInterceptor(APIKey))
+		{
 			return MortgageCalculator.calculate(homePrice, downPaymentAsPercent, loanLength, interestRate).toString();
-//		}
-//		else
-//		{
-//			return "Invalid API Key";
-//		}
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
 	}
 
 	@PostMapping("/CCMinCalculator")
@@ -145,18 +157,18 @@ public class BigBankApplication
 		double minimumPaymentPercentage = obj.getDouble("minimumPaymentPercentage");
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
-		AddLog( CreditMin,  APIKey,  "/CCMinCalculator");
+		//AddLog( CreditMin,  APIKey,  "/CCMinCalculator");
 
-//		if (APIKeyInterceptor(APIKey))
-//		{
+		if (APIKeyInterceptor(APIKey))
+		{
 			return CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(CCBalance,
 					CCInterestRate, minimumPaymentPercentage).toString();
 
-//		}
-//		else
-//		{
-//			return "Invalid API Key";
-//		}
+		}
+		else
+		{
+			return "Invalid API Key";
+		}
 	}
 
 	@PostMapping("/CCPayoffCalculator")
@@ -169,66 +181,24 @@ public class BigBankApplication
 		int months = obj.getInt("Months");
 		int APIKey = obj.getInt("APIKey");
 		//Log this request
-		AddLog( CreditPayoff,  APIKey,  "/CCPayoffCalculator");
+		//AddLog( CreditPayoff,  APIKey,  "/CCPayoffCalculator");
 
-//		if (APIKeyInterceptor(APIKey))
-//		{
+		if (APIKeyInterceptor(APIKey))
+		{
 			//Get your JSON object of values from the SSCalculator class
 			final JSONObject testObject = CCPayoff.printPayOff(ccBalance,ccInterest,months);
 
 			String returnString = testObject.toString();
 			return returnString;
-//		}
-//		else
-//		{
-//			return "Invalid API Key";
-//		}
-
-	}
-
-	//Receives user data and returns key
-	@PostMapping("/AddKey")
-	public User AddKey(@RequestBody String entityInfo) {
-
-		//get ip
-		HttpServletRequest request =
-				((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-						.getRequest();
-
-		final JSONObject entityInfoJSON = new JSONObject(entityInfo);
-		MongoCollection<User> users = database.getCollection("user", User.class);
-		int apiKey;
-
-		//Get all of the values via the keys
-		String orgName = entityInfoJSON.getString("Organization_Name");
-		String industry = entityInfoJSON.getString("Industry");
-		String POCname = entityInfoJSON.getString("PointOfContact_name");
-		String POCemail = entityInfoJSON.getString("PointOfContact_email");
-		String ip = request.getRemoteAddr();
-
-
-		//create key
-		apiKey = (orgName+industry+POCname+POCemail).hashCode();
-
-		User newUser = new User(
-				orgName,
-				industry,
-				POCname,
-				POCemail,
-				apiKey,
-				ip
-		);
-
-		//check if apikey already exists, if not -> log key and user data into db
-		if(users.find(eq("APIKey", apiKey)).first()==null)
-			users.insertOne(newUser);
+		}
 		else
-			apiKey = -1;
+		{
+			return "Invalid API Key";
+		}
 
-		//recreate into a jsonobject
-		return newUser;
 	}
 
+	//Receives Customer data and returns key
 	@PostMapping("/register")
 	public String register(@RequestBody String registerInfo) {
 
@@ -244,31 +214,33 @@ public class BigBankApplication
 		int hashedPassword = clearTextPassword.hashCode();
 
 		// create a new customer
-		Customer newCustomer = new Customer(firstName, lastName, emailAddress, homeAddress, hashedPassword);
-
-		// Save it to db.
-		//check if customer already exists, if not -> log new customer and add to db
-		String message = "";
-		String token ="";
-		if(customers.find(eq("emailAddress", emailAddress)).first()==null){
-			customers.insertOne(newCustomer);
-			message = "User was successfully created.";
-			// Build a new JWT with an issuer(iss), issued at(iat), subject(sub) and expiration(exp)
-			JWT jwt = new JWT().setIssuer("www.acme.com")
-					.setIssuedAt(ZonedDateTime.now(ZoneOffset.UTC))
-					.setSubject(emailAddress)
-					.setExpiration(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(30));
-
-			// Sign and encode the JWT to a JSON string representation
-			token = JWT.getEncoder().encode(jwt, signer);
-		} else {
-			message = "A user with this email already exists.";
+		Customer newCustomer;
+		try {
+			newCustomer =
+					AddKey(firstName, lastName, emailAddress, homeAddress, hashedPassword);
 		}
+		catch(Exception e) {
+			return "A Customer with this email already exists";
+		}
+
+		// Build a new JWT with an issuer(iss), issued at(iat), subject(sub) and expiration(exp)
+		JWT jwt = new JWT().setIssuer("www.acme.com")
+				.setIssuedAt(ZonedDateTime.now(ZoneOffset.UTC))
+				.setSubject(emailAddress)
+				.setExpiration(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(30));
+
+		// Sign and encode the JWT to a JSON string representation
+		String token = JWT.getEncoder().encode(jwt, signer);
 
 		//recreate into a jsonobject
 		JSONObject response = new JSONObject();
-		response.put("message",message);
 		response.put("token",token);
+		response.put("APIKey", newCustomer.APIKey);
+		response.put("emailAddress", newCustomer.emailAddress);
+		response.put("firstName", newCustomer.firstName);
+		response.put("lastName", newCustomer.lastName);
+		response.put("homeAddress", newCustomer.homeAddress);
+		response.put("customerID", newCustomer.getID());
 		return response.toString();
 	}
 
@@ -293,7 +265,16 @@ public class BigBankApplication
 
 			// Sign and encode the JWT to a JSON string representation
 			String encodedJWT = JWT.getEncoder().encode(jwt, signer);
-			return encodedJWT;
+			JSONObject response = new JSONObject();
+			Customer currentCustomer = customers.find(eq("emailAddress", email)).first();
+			response.put("APIKey", currentCustomer.APIKey);
+			response.put("emailAddress", currentCustomer.emailAddress);
+			response.put("firstName", currentCustomer.firstName);
+			response.put("lastName", currentCustomer.lastName);
+			response.put("homeAddress", currentCustomer.homeAddress);
+			response.put("customerID", currentCustomer.id);
+			response.put("token",encodedJWT);
+			return response.toString();
 		} else {
 			// if they don't return error
 			return "Invalid email/password.";
@@ -327,32 +308,50 @@ public class BigBankApplication
 		return deletedUser.toString();
 	}
 
+	@PostMapping("/addAccount")
+	public String addAccount(@RequestBody String accountInfo) {
+		try {
+			return "OK";
+		}
+		catch(Exception e) {
+			return "There was an error creating the account";
+		}
+	}
+
+	//Record a human readable timestamp, the type of transaction (create, transfer, deposit),
+	// the customer ID (not email), account numbers impacted, and any dollar amount recorded for the transaction.
+
+	@PostMapping("/createLog")
+	public void LogBAMS(@RequestBody String logInfo) {
+		final JSONObject obj = new JSONObject(logInfo);
+
+		String timestamp = new Timestamp(System.currentTimeMillis()).toString();
+		String transactionType = obj.getString("transactionType");
+		String customerID = obj.getString("customerID");
+		String account1 = obj.getString("account1");
+		String account2 = obj.getString("account2");
+		double dollarAmount = obj.getDouble("dollarAmount");
+
+		Log newLog = new Log(timestamp, transactionType, customerID, account1, account2, dollarAmount);
+		BAMLogs.insertOne(newLog);
+	}
+
 	@GetMapping("/GetAllLogs")
 	public List<String> GetAllLogs() {
-		MongoCollection<Document> logs = database.getCollection("requestHistory");
 		List<String> response = new ArrayList<String>();
 
-		Consumer<Document> addLogToList = new Consumer<Document>() {
-			@Override
-			public void accept(final Document document) {
-				response.add(document.toJson());
-			}
-		};
+		for (Log log: BAMLogs.find()) {
+			response.add(log.toString());
+		}
 
-
-		logs.find().forEach(addLogToList);
-
-		System.out.println(response);
-
-
+		//BAMLogs.find().forEach(addLogToList);
 
 		return response;
 	}
 
 	public boolean APIKeyInterceptor(int APIKey)
 	{
-		MongoCollection<User> users = database.getCollection("user", User.class);
-		return (users.find(eq("APIKey", APIKey)).first()!=null);
+		return (customers.find(eq("APIKey", APIKey)).first()!=null);
 	}
 
 	public boolean TokenInterceptor(String encodedJWT){
@@ -379,7 +378,7 @@ public class BigBankApplication
 
 	}
 
-	public void AddLog(String body, int APIKey, String EndPoint) throws Exception {
+	/*public void AddLog(String body, int APIKey, String EndPoint) throws Exception {
 		//Returns collection or view object. Will create one if there is not one yet specified
 		MongoCollection<Log> logs = database.getCollection("requestHistory", Log.class);
 
@@ -388,7 +387,28 @@ public class BigBankApplication
 
 		//inserts the new log document into the log collection in the big-bank-db database
 		logs.insertOne(insert);
-	}
+	}*/
 
+	public Customer AddKey(String firstName, String lastName, String emailAddress, String homeAddress, int hashedPassword) throws Exception {
+		int apiKey;
+		//create key
+		apiKey = (firstName+lastName+emailAddress+homeAddress+hashedPassword).hashCode();
+		Customer newCustomer = new Customer(
+				firstName,
+				lastName,
+				emailAddress,
+				homeAddress,
+				hashedPassword,
+				apiKey
+		);
+		//check if apikey already exists, if not -> log key and user data into db
+		if(customers.find(eq("emailAddress", emailAddress)).first()==null) {
+			customers.insertOne(newCustomer);
+			return customers.find(eq("emailAddress", emailAddress)).first();
+		}
+		else {
+			throw new Exception("Customer exists");
+		}
+	}
 
 }
