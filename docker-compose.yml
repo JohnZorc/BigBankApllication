@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  database:
+    container_name: "database"
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"
+    expose:
+      - 27017
+
+  backend:
+    container_name: "backend"
+    depends_on:
+      - database
+    build: .
+    ports:
+      - "8080:8080"
+    links:
+      - database
+
+
+  frontend:
+    container_name: "frontend"
+    depends_on:
+      - backend
+      - database
+    build:
+      src-frontend/.
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    command: npm start
