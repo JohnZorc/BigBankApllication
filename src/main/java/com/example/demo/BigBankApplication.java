@@ -78,16 +78,16 @@ public class BigBankApplication
 	MongoClient mongoClient = MongoClients.create(settings); // Connects to mongoDB deamon running on port 27017
 	MongoDatabase database = mongoClient.getDatabase("big-bank-db"); // Gets db from deamon, creates it if not found.
 
-	ConnectionString connectionString2 = new ConnectionString("mongodb://myUserAdmin:pp29softTest@35.188.134.30:27017/");
+	ConnectionString connectionString2 = new ConnectionString("mongodb://myUserAdmin:pp29softTest@34.121.219.161:27017/");
 	CodecRegistry pojoCodecRegistry2 = fromRegistries(
 			MongoClientSettings.getDefaultCodecRegistry(),
 			fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 	MongoClientSettings settings2 = MongoClientSettings.builder()
-			.applyConnectionString(connectionString)
-			.codecRegistry(pojoCodecRegistry)
+			.applyConnectionString(connectionString2)
+			.codecRegistry(pojoCodecRegistry2)
 			.build();
-	MongoClient mongoClient2 = MongoClients.create(settings); // Connects to mongoDB deamon running on port 27017
-	MongoDatabase database2 = mongoClient.getDatabase("big-bank-db"); // Gets db from deamon, creates it if not found.
+	MongoClient mongoClient2 = MongoClients.create(settings2); // Connects to mongoDB deamon running on port 27017
+	MongoDatabase database2 = mongoClient2.getDatabase("big-bank-db"); // Gets db from deamon, creates it if not found.
 
 	MongoCollection<Customer> customers = database.getCollection("customers", Customer.class);
 	MongoCollection<Log> BAMLogs = database2.getCollection("logs", Log.class);
