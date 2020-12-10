@@ -37,10 +37,10 @@ function Register(props) {
                 if(res.data.token===""){
                     alert(res.data.message);
                 }else{
-                    // props.setToken(res.data.token);
-                    props.setToken(res.data);
-                    // props.setCustomer({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName});
-                    props.setCustomer({firstName:res.data.firstName,APIKey:34534523});                    
+                    props.setToken(res.data.token);
+                    // props.setToken(res.data);
+                    props.setCustomer({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName});
+                    // props.setCustomer({firstName:res.data.firstName,APIKey:34534523});                    
                     props.history.push({pathname: '/dashboard'});
                 }
             })

@@ -18,17 +18,14 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Switch>
-          <Route exact path="/dashboard" render={(props)=> <Dashboard {...props} token={jwtToken} customer={customer}/>}/>
+          <Route exact path="/dashboard" render={(props)=> <Dashboard {...props} token={jwtToken} customer={customer} setToken={setJWTToken}/>}/>
           <Route exact path="/login" render={(props)=> <Login {...props} token={jwtToken} setToken={setJWTToken} setCustomer={setCustomer}/>}/>
           <Route exact path="/register" render={(props)=> <Register {...props} token={jwtToken} setToken={setJWTToken} setCustomer={setCustomer}/>}/>
           <Route exact path="/deposit" render={(props)=> <Deposit {...props} token={jwtToken} customer={customer}/>}/>
           <Route exact path="/new_account" render={(props)=> <CreateAcc {...props} token={jwtToken} customer={customer}/>}/>
           <Route exact path="/transfer" render={(props)=> <Transfer {...props} token={jwtToken} customer={customer}/>}/>
           <Route exact path="/">
-              {/* <Redirect to="/login" />  */}
-              {/* <Redirect to="/deposit" /> */}
-              <Redirect to="/dashboard" />
-
+              <Redirect to="/login" /> 
           </Route>
         </Switch>
       </BrowserRouter>

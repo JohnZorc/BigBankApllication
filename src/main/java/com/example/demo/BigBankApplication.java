@@ -345,8 +345,6 @@ public class BigBankApplication
 
 		//BAMLogs.find().forEach(addLogToList);
 
-		System.out.println(response);
-
 		return response;
 	}
 
