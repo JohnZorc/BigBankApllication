@@ -22,13 +22,25 @@ Starts the virtual machine and runs the vagrantfile
 Use to log into your vitual machine.
 
 
-## Execution instructions:
-### Deploy ysing Google Cloud
+## Continous Integration:
+Our CI pipeline uses **GitHub Actions** and has the following jobs:
+
+1. Build
+2. Unit Test
+3. Integration Test
+4. End-to-End Test
+
+After the commit passes through the pipeline, it is added to our staging environment.
+Our staging environment is the master branch of our project.
+
+
+## Deployment instructions:
+### Deploy using Google Cloud
 To deploy the API, run `gcloud app deploy` from the project root. 
 
 ##### Running Tests
 All of the tests will be included in a tests folder. Navigate to the test folder and compile the test file you wish to run using javac, then run that test file using the java command. 
 
-## Link to deployed API:
-https://pp2-group-9.uc.r.appspot.com/
-
+## Link to deployed Apps:
+frontend: 
+backend: 
