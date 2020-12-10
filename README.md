@@ -35,8 +35,8 @@ Our staging environment is the master branch of our project.
 
 
 ## Admin Login:
-email: admin
-password: admin
+- email: admin
+- password: admin
 
 
 ## Link to deployed Apps:
