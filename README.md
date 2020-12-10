@@ -34,13 +34,6 @@ After the commit passes through the pipeline, it is added to our staging environ
 Our staging environment is the master branch of our project.
 
 
-## Deployment instructions:
-### Deploy using Google Cloud
-To deploy the API, run `gcloud app deploy` from the project root. 
-
-##### Running Tests
-All of the tests will be included in a tests folder. Navigate to the test folder and compile the test file you wish to run using javac, then run that test file using the java command. 
-
 ## Link to deployed Apps:
 frontend: 
 backend: 
