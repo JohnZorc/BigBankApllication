@@ -34,6 +34,11 @@ After the commit passes through the pipeline, it is added to our staging environ
 Our staging environment is the master branch of our project.
 
 
+## Admin Login:
+email: admin
+password: admin
+
+
 ## Link to deployed Apps:
 frontend: 
 backend: 
