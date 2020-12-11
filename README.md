@@ -11,6 +11,8 @@ From the project root, run `docker-compose up` and the project modules will star
 
 The frontend will not automatically open, please head to http://localhost:3000/ to access the BOBS app after 'docker-compose up' is finished executing.
 
+Note: Our JWT token expires after 30mins.
+
 
 ## Continous Integration:
 Our CI pipeline uses **GitHub Actions** and has the following jobs:
