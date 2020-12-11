@@ -16,14 +16,6 @@ export default function Dashboard(props)  {
                     setLogs(res.data);
             })
         }else{
-<<<<<<< HEAD
-            axios.get(`http://localhost:8080/dashboard/`,
-            {headers:{'Authorization':props.token}})
-            .then(res => {
-                if(res.data==="You do not have access to access this page."){
-                    props.history.replace({pathname: '/login'});
-                }
-=======
 
             if(props.token===""){
                 props.history.replace({pathname: '/login'});
@@ -37,13 +29,8 @@ export default function Dashboard(props)  {
                         props.history.replace({pathname: '/login'});
                         alert("You've been logged out from an expired token.");
                     }
->>>>>>> d80eb7f196e67533e76aa5acaf8f6ad02ffceaff
             })
             }
-
-            
-
-
 
             axios.get(`http://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
             {headers:{Authorization:'iOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'}})
