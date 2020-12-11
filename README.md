@@ -1,5 +1,5 @@
 # big-bank-cfi-suite-sw-testing-team-9
-big-bank-cfi-suite-sw-testing-team-9 created by GitHub Classroom
+John Zorc, Monica Tam, David Gutierrez, Nathan Schwartz
 
 ## Execution instructions:
 ### Docker:
