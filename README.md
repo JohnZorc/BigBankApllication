@@ -9,7 +9,7 @@ From the project root, run `docker-compose up` and the project modules will star
 - backend `8080`
 - database `27017`
 
-The frontend will not automatically open, please head to http://localhost:3000/ to access the BOBS app
+The frontend will not automatically open, please head to http://localhost:3000/ to access the BOBS app after 'docker-compose up' is finished executing.
 
 
 ## Continous Integration:
