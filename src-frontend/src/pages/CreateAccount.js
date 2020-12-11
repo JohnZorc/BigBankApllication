@@ -4,6 +4,20 @@ import axios from 'axios';
 
 export default function Dashboard(props)  {
 
+    React.useEffect(() => {
+
+        if(props.token===""){
+            props.history.replace({pathname: '/login'});
+        }
+
+        axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
+        .then(res => {
+            if(res.data==="You do not have access to access this page."){
+                props.history.replace({pathname: '/login'});
+            }
+        })
+    });
+
     const { register, errors, handleSubmit } = useForm({
         mode: "onBlur"
     });
@@ -48,13 +62,18 @@ export default function Dashboard(props)  {
                 <span>    
                     <label style={{marginRight:10}}>Starting Balance</label>
                     <label>$</label>
-                    <input name="start_balance" type="number" step="0.01" ref={register({})} style={{marginRight:10}}/>
-                    {/* {errors.age && errors.age.message} */}
+                    <input name="start_balance" type="number" step="0.01" 
+                        ref={register({ required: true,validate:{
+                            positive: value => value >=0 || "Input must be a positive value" ,
+                            nonzero: value => value>0 || "Input must be a non-zero value", 
+                        }})}  
+                        style={{marginRight:10}}/>
+                    <p style={{color:"red"}}>{errors.start_balance && errors.start_balance.message}</p>
                 </span>
 
-                    <input type="submit" value="Create New Account" style={{alignSelf:"center",marginTop:20,marginBottom:25}}/>
+                    <input type="submit" value="Create New Account" style={{alignSelf:"center",marginTop:5,marginBottom:25}}/>
             </form>
-            {/* <button onClick={(e)=>props.history.push({pathname: '/dashboard',token:props.location.token})}>Back</button> */}
+            <button onClick={(e)=>props.history.push({pathname: '/dashboard'})}>Back</button>
 
         </div>
     )
