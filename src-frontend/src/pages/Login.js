@@ -8,6 +8,24 @@ import '../main.css'
 
 function Login(props) {
 
+    React.useEffect(() => {
+
+        if(props.token!==""){
+            axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
+            .then(res => {
+                if(res.data==="You do not have access to access this page."){
+                    //stay on this page
+                }else{
+                    props.history.replace({pathname: '/dashboard'});
+                }
+            })
+        }
+
+        if(localStorage.getItem('customer')==="admin"){
+            props.history.push({pathname: '/dashboard'});
+        }
+    });
+
     const [form, setForm] = React.useState({
             email: '',
             password: ''
@@ -28,7 +46,9 @@ function Login(props) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if(form.email==="admin"&&form.password==="admin"){
-            props.history.push({pathname: '/dashboard',is_admin:true});
+            props.setCustomer({customerID:"admin"});
+            localStorage.setItem('customer',"admin");
+            props.history.push({pathname: '/dashboard'});
         }else{
             axios.post(`http://localhost:8080/login`, form)
             .then(res => {
@@ -37,6 +57,8 @@ function Login(props) {
                 }else{
                     props.setToken(res.data.token);
                     props.setCustomer({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName});
+                    localStorage.setItem('token', res.data.token);
+                    localStorage.setItem('customer', JSON.stringify({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName}));
 
                     props.history.push({pathname: '/dashboard'});
                 }
