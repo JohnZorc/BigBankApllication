@@ -10,18 +10,26 @@ export default function Dashboard(props)  {
 
     React.useEffect(() => {
 
-        if(props.location.is_admin){
+        if(localStorage.getItem('customer')==="admin"){
             axios.get(`http://localhost:8080/GetAllLogs/`)
                 .then(res => {
                     setLogs(res.data);
             })
         }else{
-            axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
-            .then(res => {
-                if(res.data==="You do not have access to access this page."){
-                    props.history.replace({pathname: '/login'});
-                }
+
+            if(props.token===""){
+                props.history.replace({pathname: '/login'});
+            }else{
+                axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
+                .then(res => {
+                    if(res.data==="You do not have access to access this page."){
+                        props.history.replace({pathname: '/login'});
+                        alert("You've been logged out from an expired token.");
+                    }
             })
+            }
+
+            
 
             //add axios func for getting all associated accounts here
             //perform func to get networth after
@@ -33,7 +41,7 @@ export default function Dashboard(props)  {
     const [ccPayResults,setccPayResults] = React.useState("");
     const [simpSavResults,setsimpSavResults] = React.useState(""); 
     
-    const { register, errors, handleSubmit } = useForm({
+    const { register, errors, handleSubmit, getValues,clearErrors } = useForm({
         mode: "onBlur"
       });
     
@@ -69,7 +77,7 @@ export default function Dashboard(props)  {
             minimumPaymentPercentage: data.minPayPercent,
             APIKey:props.customer.APIKey
         })
-            .then(res => {
+        .then(res => {
             console.log(res.data);
             setCCMinResults(res.data);
         })
@@ -99,7 +107,7 @@ export default function Dashboard(props)  {
             Months: data.months,
             APIKey:props.customer.APIKey
         })
-            .then(res => {
+        .then(res => {
             console.log(res.data);
             setccPayResults(res.data);
         })
@@ -127,11 +135,11 @@ export default function Dashboard(props)  {
         <div>
 
             {
-            props.location.is_admin ? 
+            localStorage.getItem('customer')==="admin" ? 
 
                 <div style={{display:"flex", flexDirection:"column",alignItems:"flex-start",marginLeft:30, marginBottom:70}}>
                     <div className="header" style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", alignItems:"center",alignSelf:"flex-end",marginRight:30}}>
-                        <button style={{marginLeft:25,marginTop:25,maxHeight:25}} onClick={(e)=>{props.setToken(""); props.history.push({pathname: '/login'});}}>Log Out</button>
+                        <button style={{marginLeft:25,marginTop:25,maxHeight:25}} onClick={(e)=>{localStorage.setItem('token',""); props.setToken(""); localStorage.setItem('customer',""); props.history.push({pathname: '/login'});}}>Log Out</button>
                     </div>
                     <h1>BAMS Transactions LOGS</h1>
                     {/* Loop through the logs */}
@@ -145,7 +153,7 @@ export default function Dashboard(props)  {
                 <div style={{display:"flex", flexDirection:"column", marginBottom:70}}>
                     <div className="header" style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", alignItems:"center",marginRight:30}}>
                         <h3>Welcome back, {props.customer.firstName}</h3>
-                        <button style={{marginLeft:25,maxHeight:25}} onClick={(e)=>{props.setToken(""); props.history.push({pathname: '/login'});}}>Log Out</button>
+                        <button style={{marginLeft:25,maxHeight:25}} onClick={(e)=>{localStorage.setItem('token',""); props.setToken(""); localStorage.setItem('customer',""); props.history.push({pathname: '/login'});}}>Log Out</button>
                     </div>
 
                     <div className="row_container" style={{display:"flex", flexDirection:"row"}}>
@@ -175,24 +183,50 @@ export default function Dashboard(props)  {
                             
                             <div className="cc-min" style={{display:"flex",flexDirection:"column"}}>
                                 <h3>Credit Card Minimum Payment Calculator</h3>
-                                <form onSubmit={handleSubmit(onCCMinSubmit)} style={{display:"flex",flexDirection:"column", rowGap:15, alignItems:"flex-start"}}>
+                                <form onSubmit={handleSubmit(errors.minPayPercent?null:onCCMinSubmit)} style={{display:"flex",flexDirection:"column", alignItems:"flex-start"}}>
+                                    
+                                    {/* only positive vals and nonzero*/}
                                     <span>
                                         <label htmlFor="ccBalance" style={{marginRight:10}}>Credit Card Balance</label>
-                                        <input name="ccBalance" type="number" step="0.01" ref={register({ required: true })} style={{marginRight:10}}/>
-                                        {/* validate: value => value !== "admin" || "Nice try!" */}
-                                        {/* {errors.firstName && errors.firstName.message} */}
+                                        <input name="ccBalance" type="number" step="0.01" 
+                                            ref={register({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value",
+                                                tooLow: value => (getValues("minPayPercent")===""||getValues("minPayPercent") > ( value*(getValues("ccInterest")/100) )) || "Minimum payment percentage is too low",
+                                                }})}  
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors.ccBalance && errors.ccBalance.message}</p>
                                     </span>
+                                    
 
+                                    {/* only positive vals and nonzero*/}
                                     <span>    
                                         <label style={{marginRight:10}}>Credit Card Interest Rate (enter as decimal)</label>
-                                        <input name="ccInterest" type="number" step="0.01" ref={register} style={{marginRight:10}}/>
+                                        <input name="ccInterest" type="number" step="0.01" 
+                                            ref={register({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value",
+                                                tooLow: value => (getValues("minPayPercent")===""||getValues("minPayPercent")> ( getValues("ccBalance")*(value/100) )) || "Minimum payment percentage is too low",
+                                                }})} 
+                                            style={{marginRight:10}}
+                                        />
+                                        <p style={{color:"red"}}>{errors.ccInterest && errors.ccInterest.message}</p>
                                     </span>
 
+
+                                    {/* only positive vals and nonzero*/}
+                                    {/* has to be more than ccbalance*(ccinterest/100) */}
                                     <span>    
                                         <label style={{marginRight:10}}>Minimum Payment Percentage (enter as decimal)</label>
-                                        <input name="minPayPercent" type="number" step="0.01" ref={register} style={{marginRight:10}}/>
-                                        {/* validate: value => value <5 || "too high!" */}
-                                        {/* {errors.age && errors.age.message} */}
+                                        <input name="minPayPercent" type="number" step="0.01" 
+                                            ref={register({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value",
+                                                tooLow: value => value> ( getValues("ccBalance")*(getValues("ccInterest")/100) ) || "Minimum payment percentage is too low",
+                                                }})} 
+                                            onChange = {()=>{clearErrors('ccBalance');clearErrors('ccInterest')}}
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors.minPayPercent && errors.minPayPercent.message}</p>
                                     </span>
 
                                         <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center",marginBottom:25}}/>
@@ -209,27 +243,58 @@ export default function Dashboard(props)  {
 
                             <div className="mort-calc" style={{display:"flex",flexDirection:"column", marginTop:35}}>
                                 <h3>Mortgage Calculator</h3>
-                                <form onSubmit={handleSubmit2(onMortSubmit)} style={{display:"flex",flexDirection:"column", rowGap:15, alignItems:"flex-start"}}>
+                                <form onSubmit={handleSubmit2(onMortSubmit)} style={{display:"flex",flexDirection:"column", alignItems:"flex-start"}}>
+                                    
+                                    {/* must be more than zero, but not zero */}
                                     <span>
                                         <label style={{marginRight:10}}>Home Price</label>
-                                        <input name="homePrice" type="number" step="0.01" ref={register2({required: true})} style={{marginRight:10}}/>
-                                        {/* {errors.firstName && errors.firstName.message} */}
+                                        <input name="homePrice" type="number" step="0.01" 
+                                            ref={register2({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                                }})}  
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors2.homePrice && errors2.homePrice.message}</p>
                                     </span>
 
+                                    {/* must be more than zero, but not zero */}
                                     <span>    
                                         <label style={{marginRight:10}}>Down Payment Percentage (enter as decimal)</label>
-                                        <input name="downPayPercent" type="number" step="0.01" ref={register2({  })} style={{marginRight:10}}/>
+                                        <input name="downPayPercent" type="number" step="0.01" 
+                                            ref={register2({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                                }})}  
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors2.downPayPercent && errors2.downPayPercent.message}</p>
+
                                     </span>
 
+                                    {/* must be more than zero, but not zero */}
+                                    {/* cannot be decimal */}
                                     <span>    
                                         <label style={{marginRight:10}}>Length of Loan (in whole years)</label>
-                                        <input name="years" type="number" ref={register2({})} style={{marginRight:10}}/>
-                                        {/* {errors.age && errors.age.message} */}
+                                        <input name="years" type="number" 
+                                            ref={register2({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                                decimal: value => (value% 1===0) || "Input must be a whole number"
+                                                }})}  
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors2.years && errors2.years.message}</p>
                                     </span>
 
+                                    {/* must be more than zero, but not zero */}
                                     <span>    
                                         <label style={{marginRight:10}}>Interest Rate (enter as decimal)</label>
-                                        <input name="interest" type="number" step="0.01" ref={register2({ })} style={{marginRight:10}}/>
+                                        <input name="interest" type="number" step="0.01" 
+                                            ref={register2({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                                }})}  
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors2.interest && errors2.interest.message}</p>
+
                                     </span>
 
                                         <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center",marginBottom:25}}/>
@@ -247,23 +312,42 @@ export default function Dashboard(props)  {
 
                             <div className="cc-payoff" style={{display:"flex",flexDirection:"column", marginTop:35}}>
                                 <h3>Credit Card Payoff Calculator</h3>
-                                <form onSubmit={handleSubmit3(onCCPaySubmit)} style={{display:"flex",flexDirection:"column", rowGap:15, alignItems:"flex-start"}}>
+                                <form onSubmit={handleSubmit3(onCCPaySubmit)} style={{display:"flex",flexDirection:"column", alignItems:"flex-start"}}>
                                     <span>
+                                        {/* must be more than zero, but not zero */}
                                         <label style={{marginRight:10}}>Credit Card Balance</label>
-                                        <input name="ccBalance" type="number" step="0.01" ref={register3({})} style={{marginRight:10}}/>
-                                        {/* validate: value => value !== "admin" || "Nice try!" */}
-                                        {/* {errors.firstName && errors.firstName.message} */}
+                                        <input name="ccBalance" type="number" step="0.01" 
+                                            ref={register3({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                                }})} 
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors3.ccBalance && errors3.ccBalance.message}</p>
+
                                     </span>
 
                                     <span>    
+                                        {/* must be postive */}
                                         <label style={{marginRight:10}}>Credit Card Interest Rate (enter as decimal)</label>
-                                        <input name="ccInterest" type="number" step="0.01" ref={register3({  })} style={{marginRight:10}}/>
+                                        <input name="ccInterest" type="number" step="0.01" 
+                                            ref={register3({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                }})} 
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors3.ccInterest && errors3.ccInterest.message}</p>
+
                                     </span>
 
                                     <span>    
+                                        {/* must be more than zero, but not zero */}
                                         <label style={{marginRight:10}}>Desired Months to Pay Off</label>
-                                        <input name="months" type="number" ref={register3({})} style={{marginRight:10}}/>
-                                        {/* {errors.age && errors.age.message} */}
+                                        <input name="months" type="number" 
+                                            ref={register3({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                            }})}
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors3.months && errors3.months.message}</p>
                                     </span>
 
                                         <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center",marginBottom:25}}/>
@@ -280,27 +364,49 @@ export default function Dashboard(props)  {
 
                             <div className="simp-savings" style={{display:"flex",flexDirection:"column", marginTop:35}}>
                                 <h3>Simple Savings Calculator</h3>
-                                <form onSubmit={handleSubmit4(onSimpSavSubmit)} style={{display:"flex",flexDirection:"column", rowGap:15, alignItems:"flex-start"}}>
+                                <form onSubmit={handleSubmit4(onSimpSavSubmit)} style={{display:"flex",flexDirection:"column", alignItems:"flex-start"}}>
                                     <span>
                                         <label style={{marginRight:10}}>Initial Deposit</label>
-                                        <input name="initDeposit" type="number" step="0.01" ref={register4({})} style={{marginRight:10}}/>
+                                        <input name="initDeposit" type="number" step="0.01" 
+                                            ref={register4({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                            }})}
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors4.initDeposit && errors4.initDeposit.message}</p>
                                     </span>
 
                                     <span>    
                                         <label style={{marginRight:10}}>Monthly Contribution</label>
-                                        <input name="monthlyContri" type="number" step="0.01" ref={register4({  })} style={{marginRight:10}}/>
+                                        <input name="monthlyContri" type="number" step="0.01" 
+                                            ref={register4({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                            }})}
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors4.monthlyContri && errors4.monthlyContri.message}</p>
+
                                     </span>
 
                                     <span>    
                                         <label style={{marginRight:10}}>Period (in years)</label>
-                                        <input name="period" type="number" step="0.01" ref={register4({})} style={{marginRight:10}}/>
-                                        {/* {errors.age && errors.age.message} */}
-                                    </span>
+                                        <input name="period" type="number" step="0.01"
+                                            ref={register4({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                            }})}
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors4.period && errors4.period.message}</p>                                    </span>
 
                                     <span>    
                                         <label style={{marginRight:10}}>Simple Yearly Interest Rate (APY)</label>
-                                        <input name="apy" type="number" step="0.01" ref={register4({})} style={{marginRight:10}}/>
-                                        {/* {errors.age && errors.age.message} */}
+                                        <input name="apy" type="number" step="0.01" 
+                                            ref={register4({ required: true,validate:{
+                                                positive: value => value >=0 || "Input must be a positive value" ,
+                                                nonzero: value => value>0 || "Input must be a non-zero value", 
+                                            }})}
+                                            style={{marginRight:10}}/>
+                                        <p style={{color:"red"}}>{errors4.apy && errors4.apy.message}</p>
                                     </span>
 
                                         <input type="submit" value="Calculate" style={{maxWidth:70,alignSelf:"center",marginBottom:25}}/>

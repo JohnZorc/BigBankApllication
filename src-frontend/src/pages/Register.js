@@ -6,6 +6,24 @@ import axios from 'axios'
 
 function Register(props) {
 
+    React.useEffect(() => {
+
+        if(props.token!==""){
+            axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
+            .then(res => {
+                if(res.data==="You do not have access to access this page."){
+                    //stay on this page
+                }else{
+                    props.history.replace({pathname: '/dashboard'});
+                }
+            })
+        }
+
+        if(localStorage.getItem('customer')==="admin"){
+            props.history.push({pathname: '/dashboard'});
+        }
+    });
+
     // States
     const [form, setForm] = React.useState({
        firstName: '',
@@ -38,9 +56,10 @@ function Register(props) {
                     alert(res.data.message);
                 }else{
                     props.setToken(res.data.token);
-                    // props.setToken(res.data);
-                    props.setCustomer({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName});
-                    // props.setCustomer({firstName:res.data.firstName,APIKey:34534523});                    
+                    props.setCustomer({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName});    
+                    localStorage.setItem('token', res.data.token);
+                    localStorage.setItem('customer', JSON.stringify({APIKey:res.data.APIKey,customerID:res.data.customerID,firstName:res.data.firstName}));
+         
                     props.history.push({pathname: '/dashboard'});
                 }
             })
