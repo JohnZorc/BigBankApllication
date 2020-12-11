@@ -9,6 +9,31 @@ export default function Dashboard(props)  {
     });
 
     const onSubmit = async (data) => {
+
+       axios.post(`http://staging.drbyron.io/v1/account/`,
+       {
+           headers: {
+           'Access-Control-Allow-Origin': '*',
+           'Origin': '*',
+           'Accept': 'application/json',
+           'Content-Type': 'application/json',
+           'Authorization': props.token
+           },
+           client_id:props.customer.customerID,
+           type:data.acc_type,
+           balance:data.start_balance
+       })
+           .then(res => {
+           console.log(data);
+           axios.post(`http://localhost:8080/addAccount`,
+           {
+               client_id:props.customer.customerID,
+               type:data.acc_type.value,
+               balance:data.start_balance.value
+           })
+       })
+
+
         // axios.post(`http://localhost:8080/CCMinCalculator`,
         // {
         //     CCBalance:data.ccBalance,

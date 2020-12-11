@@ -9,17 +9,18 @@ export default function Dashboard(props)  {
     });
 
     const onSubmit = async (data) => {
-        // axios.post(`http://localhost:8080/CCMinCalculator`,
-        // {
-        //     CCBalance:data.ccBalance,
-        //     CCInterestRate:data.ccInterest,
-        //     minimumPaymentPercentage: data.minPayPercent,
-        //     APIKey:312736
-        // })
-        //     .then(res => {
-        //     console.log(res.data);
-        //     setCCMinResults(res.data);
-        // })
+
+
+
+         axios.post(`http://localhost:8080/CCMinCalculator`,
+         {
+             from_account: data.from_acc,
+             to_account: data.to_acc,
+             amount: data.start_balance
+         })
+             .then(res => {
+             console.log(data);
+         })
 
 
     }
