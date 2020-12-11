@@ -9,18 +9,6 @@ From the project root, run `docker-compose up` and the project modules will star
 - backend `8080`
 - database `27017`
 
-### Vagrant:  
-#### Setting up Vagrant 
-Download and install our repository. The Vagrantfile includes commands for setting up the 
-virtual machine and installing Java JDK8.
-#### Commands
-##### Vagrant init
-Initializes Vagrant
-##### Vagrant up
-Starts the virtual machine and runs the vagrantfile
-##### Vagrant ssh 
-Use to log into your vitual machine.
-
 
 ## Continous Integration:
 Our CI pipeline uses **GitHub Actions** and has the following jobs:
