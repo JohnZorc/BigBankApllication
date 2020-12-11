@@ -23,6 +23,9 @@ export default function Dashboard(props)  {
                 axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
                 .then(res => {
                     if(res.data==="You do not have access to access this page."){
+                        localStorage.setItem('token',""); 
+                        props.setToken(""); 
+                        localStorage.setItem('customer',"");
                         props.history.replace({pathname: '/login'});
                         alert("You've been logged out from an expired token.");
                     }
