@@ -2,20 +2,20 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 
-export default function Dashboard(props)  {
+export default function TransferFunds(props)  {
 
     React.useEffect(() => {
 
-        if(props.token===""){
-            props.history.replace({pathname: '/login'});
-        }
+//         if(props.token===""){
+//             props.history.replace({pathname: '/login'});
+//         }
 
-        axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
-        .then(res => {
-            if(res.data==="You do not have access to access this page."){
-                props.history.replace({pathname: '/login'});
-            }
-        })
+//         axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
+//         .then(res => {
+//             if(res.data==="You do not have access to access this page."){
+//                 props.history.replace({pathname: '/login'});
+//             }
+//         })
     });
 
     const { register, errors, handleSubmit } = useForm({
