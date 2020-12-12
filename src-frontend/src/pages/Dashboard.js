@@ -10,27 +10,27 @@ export default function Dashboard(props)  {
 
     React.useEffect(() => {
 
-        if(localStorage.getItem('customer')==="admin"){
-            axios.get(`http://localhost:8080/GetAllLogs/`)
-                .then(res => {
-                    setLogs(res.data);
-            })
-        }else{
+//         if(localStorage.getItem('customer')==="admin"){
+//             axios.get(`http://localhost:8080/GetAllLogs/`)
+//                 .then(res => {
+//                     setLogs(res.data);
+//             })
+//         }else{
 
-            if(props.token===""){
-                props.history.replace({pathname: '/login'});
-            }else{
-                axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
-                .then(res => {
-                    if(res.data==="You do not have access to access this page."){
-                        localStorage.setItem('token',""); 
-                        props.setToken(""); 
-                        localStorage.setItem('customer',"");
-                        props.history.replace({pathname: '/login'});
-                        alert("You've been logged out from an expired token.");
-                    }
-            })
-            }
+//             if(props.token===""){
+//                 props.history.replace({pathname: '/login'});
+//             }else{
+//                 axios.get(`http://localhost:8080/dashboard/`,{headers:{Authorization:props.token}})
+//                 .then(res => {
+//                     if(res.data==="You do not have access to access this page."){
+//                         localStorage.setItem('token',""); 
+//                         props.setToken(""); 
+//                         localStorage.setItem('customer',"");
+//                         props.history.replace({pathname: '/login'});
+//                         alert("You've been logged out from an expired token.");
+//                     }
+//             })
+//             }
 
             axios.get(`http://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
             {headers:
@@ -54,7 +54,7 @@ export default function Dashboard(props)  {
 
             //add axios func for getting all associated accounts here
             //perform func to get networth after
-        }
+//         }
     });
 
 
