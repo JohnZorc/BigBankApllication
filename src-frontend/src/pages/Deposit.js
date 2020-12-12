@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 
-export default function Dashboard(props)  {
+export default function Deposit(props)  {
 
     React.useEffect(() => {
 
