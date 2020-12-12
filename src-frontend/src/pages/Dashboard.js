@@ -33,11 +33,24 @@ export default function Dashboard(props)  {
             }
 
             axios.get(`http://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
-            {headers:{Authorization:'iOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'}})
+            {headers:
+            {
+                'Content-Type':'application/json',
+                'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'}})
+            }
             .then(res => {
                 console.log(res.data);
                 accounts.push(res.data);
             })
+
+            /*
+            var nWorth;
+            var i;
+            for(i=0; i<accounts.length; i++)
+            {
+                nWorth = nWorth + accounts[i].balance;
+            }
+            */
 
             //add axios func for getting all associated accounts here
             //perform func to get networth after
