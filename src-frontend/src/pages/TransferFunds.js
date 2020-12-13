@@ -8,14 +8,14 @@ export default function TransferFunds(props)  {
 
     React.useEffect(() => {
 
-            axios.get(`https://staging.drbyron.io/v1/accounts/client-1`,
+            axios.get(`https://staging.drbyron.io/v1/accounts/client-2`,
             {headers:
             {
                 'Content-Type':'application/json',
                 'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
             }})
             .then(res => {
-                console.log(res.data);
+                //console.log(res.data);
                 setAccounts(res.data);
             })
 
@@ -36,20 +36,20 @@ export default function TransferFunds(props)  {
     });
 
     const onSubmit = async (data) => {
-
+         console.log(data.from_acc);
          axios.post(`https://staging.drbyron.io/v1/account/transfer`,
          {
 
-             from_account: data.from_acc,
-             to_account: data.to_acc,
+             from_account:data.from_acc,
+             to_account:data.to_acc,
              amount:Number(data.amt),
 
          },{headers: {
           Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ',
           }})
-             .then(res => {
+             /*.then(res => {
              console.log(res.data);
-         })
+         })*/
 
          /*axios.post(`https://staging.drbyron.io/v1/account/transfer`,
          {
@@ -77,7 +77,7 @@ export default function TransferFunds(props)  {
                         {/* Will loop through accounts list with the option tag */}
                         {/*<option value="{accounts.id}">{accounts.id}</option>*/}
                         {
-                        accounts.map((account,key) =><option key={key} value="{account.id}" style={{wordSpacing:50}}>{account.id}</option> )
+                        accounts.map((account,key) =><option key={key} value={account.id} style={{wordSpacing:50}}>{account.id}</option> )
                         }
                     </select>
 
@@ -85,7 +85,7 @@ export default function TransferFunds(props)  {
                     <select name="to_acc" ref={register({  })} style={{marginRight:50}}>
                         {/* Will loop through accounts list with the option tag */}
                         {
-                        accounts.map((account,key) =><option key={key} value="{account.id}" style={{wordSpacing:50}}>{account.id}</option> )
+                        accounts.map((account,key) =><option key={key} value={account.id} style={{wordSpacing:50}}>{account.id}</option> )
                         }
                     </select>
                 </span>

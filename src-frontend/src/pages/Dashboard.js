@@ -32,32 +32,28 @@ export default function Dashboard(props)  {
 //             })
 //             }
 
-            axios.get(`https://staging.drbyron.io/v1/accounts/client-1`,
+            axios.get(`https://staging.drbyron.io/v1/accounts/client-2`,
             {headers:
             {
                 'Content-Type':'application/json',
                 'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
             }})
             .then(res => {
-                console.log(res.data);
+                //console.log(res.data);
                 setAccounts(res.data);
             })
 
+            setNetworth(accounts.map(v=>v.balance).reduce((sum, current)=>sum+current,0));
 
-            var nWorth;
-            var i;
-            for(i=0; i<accounts.length; i++)
-            {
-                nWorth = nWorth + accounts[i].balance;
-            }
-            setNetworth(nWorth);
-
-            //add axios func for getting all associated accounts here
-            //perform func to get networth after
-//         }
     });
 
+    /*React.useEffect(()=>{
+        for(var i=0; i<accounts.length; i++)
+        {
+            setNetworth(networth + accounts[i].balance);
 
+        }
+    }, []);*/
 
 
 
@@ -156,18 +152,6 @@ export default function Dashboard(props)  {
         
     }
 
-    /*const onNewAccountSubmit = async (data) => {
-                axios.post(`http://staging.drbyron.io/v1/account/`,
-                {
-                    client_id:props.customer.customerID,
-                    type:data.acc_type,
-                    balance:data.start_balance
-                })
-                    .then(res => {
-                    console.log(res.data);
-                    setNewAccount(res.data);
-                })
-            }*/
 
     return(
 
