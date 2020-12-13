@@ -26,39 +26,19 @@ export default function CreateAccount(props)  {
 
     const onSubmit = async (data) => {
 
-       axios.post(`https://staging.drbyron.io/v1/account`,
+        axios.post(`https://staging.drbyron.io/v1/account`,
        {
-           headers: {
-           'Accept': 'application/json',
-           'Content-Type': 'application/json',
-           'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
-           },
+        
            client_id:'client-1',//props.customer.customerID,
            type:data.acc_type,
-           balance:data.start_balance
+           balance:Number(data.start_balance),
+           
+       },{headers: {
+        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ',
+        }})
+           .then(res => {
+           console.log(res.data);
        })
-           /*.then(res => {
-           console.log(data);
-           axios.post(`http://localhost:8080/addAccount`,
-           {
-               client_id:props.customer.customerID,
-               type:data.acc_type.value,
-               balance:data.start_balance.value
-           })
-       })*/
-
-
-        // axios.post(`http://localhost:8080/CCMinCalculator`,
-        // {
-        //     CCBalance:data.ccBalance,
-        //     CCInterestRate:data.ccInterest,
-        //     minimumPaymentPercentage: data.minPayPercent,
-        //     APIKey:312736
-        // })
-        //     .then(res => {
-        //     console.log(res.data);
-        //     setCCMinResults(res.data);
-        // })
 
 
     }
@@ -80,7 +60,6 @@ export default function CreateAccount(props)  {
                         <option value="money-market">Money-market</option>
                         <option value="credit-card">Credit-card</option>
                         <option value="loan">Loan</option>
-                        <option value="liability">Liability</option>
                     </select>
                 </span>
 
