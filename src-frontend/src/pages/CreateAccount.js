@@ -24,11 +24,11 @@ export default function CreateAccount(props)  {
 
     const onSubmit = async (data) => {
 
-       axios.post(`http://staging.drbyron.io/v1/account/`,
+       axios.post(`http://staging.drbyron.io/v1/account`,
        {
            headers: {
-           'Accept': 'application/json',
-           'Content-Type': 'application/json',
+           //'Accept': 'application/json',
+           //'Content-Type': 'application/json',
            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
            },
            client_id:'client-1',//props.customer.customerID,

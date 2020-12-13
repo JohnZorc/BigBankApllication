@@ -24,7 +24,7 @@ export default function Deposit(props)  {
 
     const onSubmit = async (data) => {
 
-        axios.post(`http://staging.drbyron.io/v1/account/`,
+        axios.post(`http://staging.drbyron.io/v1/account/deposit`,
                {
                    headers: {
                    'Accept': 'application/json',

@@ -26,7 +26,7 @@ export default function TransferFunds(props)  {
 
 
 
-         axios.post(`http://staging.drbyron.io/v1/account/`,
+         axios.post(`http://staging.drbyron.io/v1/account/transfer`,
          {
              headers: {
              'Accept': 'application/json',
