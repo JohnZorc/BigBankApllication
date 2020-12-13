@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 
-export default function Dashboard(props)  {
+export default function CreateAccount(props)  {
 
     React.useEffect(() => {
 
@@ -16,6 +16,8 @@ export default function Dashboard(props)  {
                 props.history.replace({pathname: '/login'});
             }
         })
+
+
     });
 
     const { register, errors, handleSubmit } = useForm({
@@ -23,17 +25,20 @@ export default function Dashboard(props)  {
     });
 
     const onSubmit = async (data) => {
-        // axios.post(`http://localhost:8080/CCMinCalculator`,
-        // {
-        //     CCBalance:data.ccBalance,
-        //     CCInterestRate:data.ccInterest,
-        //     minimumPaymentPercentage: data.minPayPercent,
-        //     APIKey:312736
-        // })
-        //     .then(res => {
-        //     console.log(res.data);
-        //     setCCMinResults(res.data);
-        // })
+
+        axios.post(`https://staging.drbyron.io/v1/account`,
+       {
+        
+           client_id:props.customer.customerID,
+           type:data.acc_type,
+           balance:Number(data.start_balance),
+           
+       },{headers: {
+        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ',
+        }})
+           .then(res => {
+           console.log(res.data);
+       })
 
 
     }
@@ -47,7 +52,7 @@ export default function Dashboard(props)  {
                     <input name="description" type="text" ref={register({})} style={{marginRight:10}}/>
                 </span>
 
-                <span>    
+                <span>
                     <label style={{marginRight:10}}>Account Type</label>
                     <select name="acc_type" ref={register({  })} style={{marginRight:10}}>
                         <option value="checking">Checking</option>
@@ -55,18 +60,17 @@ export default function Dashboard(props)  {
                         <option value="money-market">Money-market</option>
                         <option value="credit-card">Credit-card</option>
                         <option value="loan">Loan</option>
-                        <option value="liability">Liability</option>
                     </select>
                 </span>
 
-                <span>    
+                <span>
                     <label style={{marginRight:10}}>Starting Balance</label>
                     <label>$</label>
-                    <input name="start_balance" type="number" step="0.01" 
+                    <input name="start_balance" type="number" step="0.01"
                         ref={register({ required: true,validate:{
                             positive: value => value >=0 || "Input must be a positive value" ,
-                            nonzero: value => value>0 || "Input must be a non-zero value", 
-                        }})}  
+                            nonzero: value => value>0 || "Input must be a non-zero value",
+                        }})}
                         style={{marginRight:10}}/>
                     <p style={{color:"red"}}>{errors.start_balance && errors.start_balance.message}</p>
                 </span>

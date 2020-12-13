@@ -26,6 +26,7 @@ function App() {
           <Route exact path="/transfer" render={(props)=> <Transfer {...props} token={jwtToken} customer={customer}/>}/>
           <Route exact path="/">
               <Redirect to="/login" />
+
           </Route>
         </Switch>
       </BrowserRouter>

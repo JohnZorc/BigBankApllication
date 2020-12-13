@@ -2,10 +2,12 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 
-export default function Dashboard(props)  {
+export default function TransferFunds(props)  {
+
+    const [accounts,setAccounts] = React.useState([]);
 
     React.useEffect(() => {
-
+        
         if(props.token===""){
             props.history.replace({pathname: '/login'});
         }
@@ -16,6 +18,17 @@ export default function Dashboard(props)  {
                 props.history.replace({pathname: '/login'});
             }
         })
+
+            axios.get(`https://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
+            {headers:
+            {
+                'Content-Type':'application/json',
+                'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
+            }})
+            .then(res => {
+                //console.log(res.data);
+                setAccounts(res.data);
+            })
     });
 
     const { register, errors, handleSubmit } = useForm({
@@ -23,17 +36,33 @@ export default function Dashboard(props)  {
     });
 
     const onSubmit = async (data) => {
-        // axios.post(`http://localhost:8080/CCMinCalculator`,
-        // {
-        //     CCBalance:data.ccBalance,
-        //     CCInterestRate:data.ccInterest,
-        //     minimumPaymentPercentage: data.minPayPercent,
-        //     APIKey:312736
-        // })
-        //     .then(res => {
-        //     console.log(res.data);
-        //     setCCMinResults(res.data);
-        // })
+         console.log(data.from_acc);
+         axios.post(`https://staging.drbyron.io/v1/account/transfer`,
+         {
+
+             from_account:data.from_acc,
+             to_account:data.to_acc,
+             amount:Number(data.amt),
+
+         },{headers: {
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ',
+          }})
+             /*.then(res => {
+             console.log(res.data);
+         })*/
+
+         /*axios.post(`https://staging.drbyron.io/v1/account/transfer`,
+         {
+             headers: {
+             'Accept': 'application/json',
+             'Content-Type': 'application/json',
+             'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
+             },
+             from_account: data.from_acc,
+             to_account: data.to_acc,
+             amount:data.amt
+
+         })*/
 
 
     }
@@ -44,15 +73,20 @@ export default function Dashboard(props)  {
             <form onSubmit={handleSubmit(onSubmit)} style={{display:"flex",flexDirection:"column", rowGap:20, alignItems:"flex-start"}}>
                 <span>
                     <label style={{marginRight:10}}>From</label>
-                    <select name="from_acc" ref={register({  })} style={{marginRight:40}}>
+                    <select name="from_acc" ref={register({  })} style={{marginRight:50}}>
                         {/* Will loop through accounts list with the option tag */}
-                        <option value="Acc#">Acc#</option>
+                        {/*<option value="{accounts.id}">{accounts.id}</option>*/}
+                        {
+                        accounts.map((account,key) =><option key={key} value={account.id} style={{wordSpacing:50}}>{account.id}</option> )
+                        }
                     </select>
 
                     <label style={{marginRight:10}}>To</label>
-                    <select name="to_acc" ref={register({  })} style={{marginRight:10}}>
+                    <select name="to_acc" ref={register({  })} style={{marginRight:50}}>
                         {/* Will loop through accounts list with the option tag */}
-                        <option value="Acc#">Acc#</option>
+                        {
+                        accounts.map((account,key) =><option key={key} value={account.id} style={{wordSpacing:50}}>{account.id}</option> )
+                        }
                     </select>
                 </span>
 

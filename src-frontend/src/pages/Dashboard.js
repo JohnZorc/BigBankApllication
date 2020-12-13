@@ -15,7 +15,9 @@ export default function Dashboard(props)  {
                 .then(res => {
                     setLogs(res.data);
             })
-        }else{
+        }
+        else
+        {
 
             if(props.token===""){
                 props.history.replace({pathname: '/login'});
@@ -31,18 +33,30 @@ export default function Dashboard(props)  {
                     }
             })
             }
-
-            
-
-            //add axios func for getting all associated accounts here
-            //perform func to get networth after
         }
+
+            axios.get(`https://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
+            {headers:
+            {
+                'Content-Type':'application/json',
+                'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
+            }})
+            .then(res => {
+                //console.log(res.data);
+                setAccounts(res.data);
+            })
+
+            setNetworth(accounts.map(v=>v.balance).reduce((sum, current)=>sum+current,0));
+
     });
+
+
+
 
     const [ccMinResults,setCCMinResults] = React.useState("");
     const [mortCalcResults,setmortCalcResults] = React.useState("");
     const [ccPayResults,setccPayResults] = React.useState("");
-    const [simpSavResults,setsimpSavResults] = React.useState(""); 
+    const [simpSavResults,setsimpSavResults] = React.useState("");
     
     const { register, errors, handleSubmit, getValues,clearErrors } = useForm({
         mode: "onBlur"
@@ -133,6 +147,7 @@ export default function Dashboard(props)  {
         
     }
 
+
     return(
 
         <div>
@@ -145,7 +160,11 @@ export default function Dashboard(props)  {
                         <button style={{marginLeft:25,marginTop:25,maxHeight:25}} onClick={(e)=>{localStorage.setItem('token',""); props.setToken(""); localStorage.setItem('customer',""); props.history.push({pathname: '/login'});}}>Log Out</button>
                     </div>
                     <h1>BAMS Transactions LOGS</h1>
-                    {/* Loop through the logs */}
+                    {/*
+                    Loop through the logs
+
+
+                    */}
                     {
                         logs.map((log,key) => <h4 key={key} style={{marginBottom:-15}}>{log}</h4>)
                     }
@@ -169,11 +188,13 @@ export default function Dashboard(props)  {
 
                             <div style={{display:"flex", flexDirection:"column",alignItems:"center",rowGap:10,marginBottom:25}}>
 
-                                {/* {
-                                    accounts.map((account,key) =><p key={key} style={{wordSpacing:50}}> <strong>{account.number}</strong> {account.balance}</p> )
-                                } */}
 
-                                {/* <p style={{wordSpacing:50}}><strong>Net Worth/Total Balance</strong> {networth}</p> */}
+                                    {
+                                    accounts.map((account,key) =><p key={key} style={{wordSpacing:50}}> <strong>{account.id}</strong> {account.balance}</p> )
+                                    }
+
+
+                                <p style={{wordSpacing:50}}><strong>Net Worth/Total Balance</strong> {networth}</p>
 
                             </div>
                             <button style={{marginBottom:30}} onClick={(e)=>props.history.push({pathname: '/new_account',token:props.location.token})}>Create New Account</button>

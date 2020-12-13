@@ -4,10 +4,12 @@ John Zorc, Monica Tam, David Gutierrez, Nathan Schwartz
 ## Local Execution instructions:
 ### Docker:
 
+
 From the project root, run `docker-compose up` and the project modules will start in the following ports:
 - frontend `3000`
 - backend `8080`
 - database `27017`
+
 
 The frontend will not automatically open, please head to http://localhost:3000/ to access the BOBS app after 'docker-compose up' is finished executing.
 
