@@ -32,7 +32,7 @@ export default function Dashboard(props)  {
 //             })
 //             }
 
-            axios.get(`http://staging.drbyron.io/v1/accounts/client-1`,
+            axios.get(`https://staging.drbyron.io/v1/accounts/client-1`,
             {headers:
             {
                 'Content-Type':'application/json',
@@ -211,7 +211,7 @@ export default function Dashboard(props)  {
 
 
                                     {
-                                    accounts.map((account,key) =><p key={key} style={{wordSpacing:50}}> <strong>{account.number}</strong> {account.balance}</p> )
+                                    accounts.map((account,key) =><p key={key} style={{wordSpacing:50}}> <strong>{account.id}</strong> {account.balance}</p> )
                                     }
 
 

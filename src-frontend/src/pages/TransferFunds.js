@@ -4,7 +4,20 @@ import axios from 'axios';
 
 export default function TransferFunds(props)  {
 
+    const [accounts,setAccounts] = React.useState([]);
+
     React.useEffect(() => {
+
+            axios.get(`https://staging.drbyron.io/v1/accounts/client-1`,
+            {headers:
+            {
+                'Content-Type':'application/json',
+                'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
+            }})
+            .then(res => {
+                console.log(res.data);
+                accounts.push(res.data);
+            })
 
 //         if(props.token===""){
 //             props.history.replace({pathname: '/login'});
@@ -26,7 +39,7 @@ export default function TransferFunds(props)  {
 
 
 
-         axios.post(`http://staging.drbyron.io/v1/account/transfer`,
+         axios.post(`https://staging.drbyron.io/v1/account/transfer`,
          {
              headers: {
              'Accept': 'application/json',
@@ -50,13 +63,13 @@ export default function TransferFunds(props)  {
                     <label style={{marginRight:10}}>From</label>
                     <select name="from_acc" ref={register({  })} style={{marginRight:40}}>
                         {/* Will loop through accounts list with the option tag */}
-                        <option value="Acc#">Acc#</option>
+                        <option value="{accounts.id}">{accounts.id}</option>
                     </select>
 
                     <label style={{marginRight:10}}>To</label>
                     <select name="to_acc" ref={register({  })} style={{marginRight:10}}>
                         {/* Will loop through accounts list with the option tag */}
-                        <option value="Acc#">Acc#</option>
+                        <option value="{accounts.id}">{accounts.id}</option>
                     </select>
                 </span>
 
