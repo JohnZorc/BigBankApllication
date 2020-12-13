@@ -15,7 +15,9 @@ export default function Dashboard(props)  {
                 .then(res => {
                     setLogs(res.data);
             })
-        }else{
+        }
+        else
+        {
 
             if(props.token===""){
                 props.history.replace({pathname: '/login'});
@@ -31,8 +33,9 @@ export default function Dashboard(props)  {
                     }
             })
             }
+        }
 
-            axios.get(`https://staging.drbyron.io/v1/accounts/client-2`,
+            axios.get(`https://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
             {headers:
             {
                 'Content-Type':'application/json',
@@ -46,14 +49,6 @@ export default function Dashboard(props)  {
             setNetworth(accounts.map(v=>v.balance).reduce((sum, current)=>sum+current,0));
 
     });
-
-    /*React.useEffect(()=>{
-        for(var i=0; i<accounts.length; i++)
-        {
-            setNetworth(networth + accounts[i].balance);
-
-        }
-    }, []);*/
 
 
 

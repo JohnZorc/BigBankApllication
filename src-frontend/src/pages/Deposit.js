@@ -19,7 +19,7 @@ export default function Deposit(props)  {
             }
         })
 
-            axios.get(`https://staging.drbyron.io/v1/accounts/client-2`,
+            axios.get(`https://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
             {headers:
             {
                 'Content-Type':'application/json',
