@@ -40,7 +40,7 @@ export default function Dashboard(props)  {
             }})
             .then(res => {
                 console.log(res.data);
-                accounts.push(res.data);
+                setAccounts(res.data);
             })
 
 
