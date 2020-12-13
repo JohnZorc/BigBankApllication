@@ -32,25 +32,25 @@ export default function Dashboard(props)  {
 //             })
 //             }
 
-            axios.get(`http://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
+            axios.get(`http://staging.drbyron.io/v1/accounts/client-1`,
             {headers:
             {
                 'Content-Type':'application/json',
-                'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'}})
-            }
+                'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
+            }})
             .then(res => {
                 console.log(res.data);
                 accounts.push(res.data);
             })
 
-            /*
+
             var nWorth;
             var i;
             for(i=0; i<accounts.length; i++)
             {
                 nWorth = nWorth + accounts[i].balance;
             }
-            */
+            setNetworth(nWorth);
 
             //add axios func for getting all associated accounts here
             //perform func to get networth after
@@ -66,7 +66,6 @@ export default function Dashboard(props)  {
     const [mortCalcResults,setmortCalcResults] = React.useState("");
     const [ccPayResults,setccPayResults] = React.useState("");
     const [simpSavResults,setsimpSavResults] = React.useState("");
-    const [newAccount,setNewAccount] = React.useState("");
     
     const { register, errors, handleSubmit, getValues,clearErrors } = useForm({
         mode: "onBlur"
@@ -211,9 +210,9 @@ export default function Dashboard(props)  {
                             <div style={{display:"flex", flexDirection:"column",alignItems:"center",rowGap:10,marginBottom:25}}>
 
 
-                                    {/*{
+                                    {
                                     accounts.map((account,key) =><p key={key} style={{wordSpacing:50}}> <strong>{account.number}</strong> {account.balance}</p> )
-                                    }*/}
+                                    }
 
 
                                 <p style={{wordSpacing:50}}><strong>Net Worth/Total Balance</strong> {networth}</p>

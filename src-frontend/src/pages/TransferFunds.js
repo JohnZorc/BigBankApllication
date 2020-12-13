@@ -26,14 +26,17 @@ export default function TransferFunds(props)  {
 
 
 
-         axios.post(`http://localhost:8080/CCMinCalculator`,
+         axios.post(`http://staging.drbyron.io/v1/account/`,
          {
+             headers: {
+             'Accept': 'application/json',
+             'Content-Type': 'application/json',
+             'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
+             },
              from_account: data.from_acc,
              to_account: data.to_acc,
-             amount: data.start_balance
-         })
-             .then(res => {
-             console.log(data);
+             amount:data.amt
+
          })
 
 

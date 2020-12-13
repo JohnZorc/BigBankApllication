@@ -24,6 +24,18 @@ export default function Deposit(props)  {
 
     const onSubmit = async (data) => {
 
+        axios.post(`http://staging.drbyron.io/v1/account/`,
+               {
+                   headers: {
+                   'Accept': 'application/json',
+                   'Content-Type': 'application/json',
+                   'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
+                   },
+                   amount: data.start_balance,
+                   account_id: data.to_acc,
+                   source_id: '0000111122223333'
+               })
+
         /*axios.post(`http://localhost:8080/v1/account/`,
                {
                    amount: data.start_balance
@@ -34,18 +46,6 @@ export default function Deposit(props)  {
                    console.log(res.data);
                    //setNewAccount(res.data);
                })*/
-
-        // axios.post(`http://localhost:8080/CCMinCalculator`,
-        // {
-        //     CCBalance:data.ccBalance,
-        //     CCInterestRate:data.ccInterest,
-        //     minimumPaymentPercentage: data.minPayPercent,
-        //     APIKey:312736
-        // })
-        //     .then(res => {
-        //     console.log(res.data);
-        //     setCCMinResults(res.data);
-        // })
 
 
     }

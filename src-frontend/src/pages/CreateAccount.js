@@ -27,13 +27,11 @@ export default function CreateAccount(props)  {
        axios.post(`http://staging.drbyron.io/v1/account/`,
        {
            headers: {
-           'Access-Control-Allow-Origin': '*',
-           'Origin': '*',
            'Accept': 'application/json',
            'Content-Type': 'application/json',
            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
            },
-           client_id:props.customer.customerID,
+           client_id:'client-1',//props.customer.customerID,
            type:data.acc_type,
            balance:data.start_balance
        })
@@ -72,7 +70,7 @@ export default function CreateAccount(props)  {
                     <input name="description" type="text" ref={register({})} style={{marginRight:10}}/>
                 </span>
 
-                <span>    
+                <span>
                     <label style={{marginRight:10}}>Account Type</label>
                     <select name="acc_type" ref={register({  })} style={{marginRight:10}}>
                         <option value="checking">Checking</option>
@@ -84,14 +82,14 @@ export default function CreateAccount(props)  {
                     </select>
                 </span>
 
-                <span>    
+                <span>
                     <label style={{marginRight:10}}>Starting Balance</label>
                     <label>$</label>
-                    <input name="start_balance" type="number" step="0.01" 
+                    <input name="start_balance" type="number" step="0.01"
                         ref={register({ required: true,validate:{
                             positive: value => value >=0 || "Input must be a positive value" ,
-                            nonzero: value => value>0 || "Input must be a non-zero value", 
-                        }})}  
+                            nonzero: value => value>0 || "Input must be a non-zero value",
+                        }})}
                         style={{marginRight:10}}/>
                     <p style={{color:"red"}}>{errors.start_balance && errors.start_balance.message}</p>
                 </span>
