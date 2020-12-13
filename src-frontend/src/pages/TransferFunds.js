@@ -47,9 +47,17 @@ export default function TransferFunds(props)  {
          },{headers: {
           Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ',
           }})
-             /*.then(res => {
-             console.log(res.data);
-         })*/
+             .then(res => {
+             axios.post(`https://localhost:8080/createLog/`,
+             {
+                 transactionType:"transfer",
+                 customerID:props.customer.customerID,
+                 account1:data.from_acc,
+                 account2:data.to_acc,
+                 dollarAmount:Number(data.amt)
+
+             })
+         })
 
          /*axios.post(`https://staging.drbyron.io/v1/account/transfer`,
          {
