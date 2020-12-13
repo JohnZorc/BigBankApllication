@@ -1,27 +1,38 @@
 # big-bank-cfi-suite-sw-testing-team-9
-big-bank-cfi-suite-sw-testing-team-9 created by GitHub Classroom
+John Zorc, Monica Tam, David Gutierrez, Nathan Schwartz
 
-## Execution instructions:
+## Local Execution instructions:
 ### Docker:
 
-From the project root, run `docker-compose up` and the project will run locally on port 8080.
 
-### Vagrant:  
-#### Setting up Vagrant 
-Download and install our repository. The Vagrantfile includes commands for setting up the 
-virtual machine and installing Java JDK8.
-#### Commands
-##### Vagrant init
-Initializes Vagrant
-##### Vagrant up
-Starts the virtual machine and runs the vagrantfile
-##### Vagrant ssh 
-Use to log into your vitual machine.
-
-##### Running Tests
-All of the tests will be included in a tests folder. Navigate to the test folder and compile the test file you wish to run using javac, then run that test file using the java command. 
-
-## Link to deployed application:
-http://35.193.68.187:8080/
+From the project root, run `docker-compose up` and the project modules will start in the following ports:
+- frontend `3000`
+- backend `8080`
+- database `27017`
 
 
+The frontend will not automatically open, please head to http://localhost:3000/ to access the BOBS app after 'docker-compose up' is finished executing.
+
+Note: Our JWT token expires after 30mins.
+
+
+## Continous Integration:
+Our CI pipeline uses **GitHub Actions** and has the following jobs:
+
+1. Build
+2. Unit Test
+3. Integration Test
+4. End-to-End Test
+
+After the commit passes through the pipeline, it is added to our staging environment.
+Our staging environment is the master branch of our project.
+
+
+## Admin Login:
+- email: admin
+- password: admin
+
+
+## Link to deployed Apps:
+frontend: 
+backend: 

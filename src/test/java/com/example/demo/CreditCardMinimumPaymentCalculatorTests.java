@@ -13,8 +13,14 @@ public class CreditCardMinimumPaymentCalculatorTests
     void testAllValidInputs() throws Exception {
         String expected = "{\"months\":50,\"monthlyPayment\":\"2.25\",\"totalAmountPaid\":\"112.50\"}";
 
-        assertEquals(expected,
-                CreditCardMinimumPaymentCalculator.CreditCardMinimumPaymentCalculator(75, 1, 3)
+        assertEquals(50, CreditCardMinimumPaymentCalculator.
+            CreditCardMinimumPaymentCalculator(75, 1, 3).get("months")
+        );
+        assertEquals("2.25", CreditCardMinimumPaymentCalculator.
+            CreditCardMinimumPaymentCalculator(75, 1, 3).get("monthlyPayment")
+        );
+        assertEquals("112.50", CreditCardMinimumPaymentCalculator.
+            CreditCardMinimumPaymentCalculator(75, 1, 3).get("totalAmountPaid")
         );
     }
 

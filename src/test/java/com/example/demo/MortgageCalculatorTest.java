@@ -66,10 +66,16 @@ class MortgageCalculatorTest {
 
     @Test
     void testMortgageCalculatesCorrectly() throws Exception {
-        String expected = "{\"monthlyPayment\":\"$1,005.21\",\"amountPaidInInterest\":\"$12,500.00\",\"amountPainInPrinciple\":\"$228,750.00\",\"totalAmountPaid\":\"$241,250.00\"}";
+        /*String expected = "{\"monthlyPayment\":\"$1,005.21\",\"amountPaidInInterest\":\"$12,500.00\"" +
+            ",\"amountPainInPrinciple\":\"$228,750.00\",\"totalAmountPaid\":\"$241,250.00\"}";*/
 
-        assertEquals(expected,
-                MortgageCalculator.calculate(250000.00,8.5,20,5.00)
-        );
+        assertEquals("$1,005.21", MortgageCalculator.calculate(250000.00,8.5,20,5.00).get("monthlyPayment"),
+            "Tests all valid, non-zero numbers");
+        assertEquals("$228,750.00", MortgageCalculator.calculate(250000.00,8.5,20,5.00).get("amountPainInPrinciple"),
+            "Tests all valid, non-zero numbers");
+        assertEquals("$12,500.00", MortgageCalculator.calculate(250000.00,8.5,20,5.00).get("amountPaidInInterest"),
+            "Tests all valid, non-zero numbers");
+        assertEquals("$241,250.00", MortgageCalculator.calculate(250000.00,8.5,20,5.00).get("totalAmountPaid"),
+            "Tests all valid, non-zero numbers");
     }
 }
