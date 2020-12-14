@@ -26,7 +26,7 @@ export default function CreateAccount(props)  {
 
     const onSubmit = async (data) => {
 
-        axios.post(`https://staging.drbyron.io/v1/account`,
+        axios.post(`https://accounts.drbyron.io/v1/account`,
        {
         
            client_id:props.customer.customerID,
@@ -34,10 +34,23 @@ export default function CreateAccount(props)  {
            balance:Number(data.start_balance),
            
        },{headers: {
-        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ',
+        Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhY2NvdW50cy5kcmJ5cm9uLmlvIiwiZXhwIjoxNjA5ODg3MTA1LCJwcm9mIjoiRHIuIEJ5cm9uIiwidGVhbSI6InRlYW0tOSJ9.sTGbBBhTTGubq9DxYEDaarLNymvZPU03bXfZ2aEJm1Q',
         }})
            .then(res => {
            console.log(res.data);
+           axios.post(`http://localhost:8080/createLog`,
+            {
+                transactionType:"create_account",
+                customerID: String(props.customer.customerID),
+                account1:String(data.acc_type),
+                account2:"ran",
+                amount:Number(data.start_balance),
+                newBalance:Number(0)
+
+            })
+
+            props.history.push({pathname: '/dashboard'});
+
        })
 
 

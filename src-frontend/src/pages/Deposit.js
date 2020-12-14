@@ -16,19 +16,19 @@ export default function Deposit(props)  {
         .then(res => {
             if(res.data==="You do not have access to access this page."){
                 props.history.replace({pathname: '/login'});
+            }else{
+                axios.get(`https://accounts.drbyron.io/v1/accounts/${props.customer.customerID}`,
+                {headers:
+                {
+                    'Content-Type':'application/json',
+                    'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhY2NvdW50cy5kcmJ5cm9uLmlvIiwiZXhwIjoxNjA5ODg3MTA1LCJwcm9mIjoiRHIuIEJ5cm9uIiwidGVhbSI6InRlYW0tOSJ9.sTGbBBhTTGubq9DxYEDaarLNymvZPU03bXfZ2aEJm1Q'
+                }})
+                .then(res => {
+                    //console.log(res.data);
+                    setAccounts(res.data);
+                })
             }
         })
-
-            axios.get(`https://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
-            {headers:
-            {
-                'Content-Type':'application/json',
-                'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
-            }})
-            .then(res => {
-                //console.log(res.data);
-                setAccounts(res.data);
-            })
         
     });
 
@@ -38,7 +38,7 @@ export default function Deposit(props)  {
 
     const onSubmit = async (data) => {
 
-        axios.post(`https://staging.drbyron.io/v1/account/deposit`,
+        axios.post(`https://accounts.drbyron.io/v1/account/deposit`,
         {
 
             amount: Number(data.amt),
@@ -46,31 +46,24 @@ export default function Deposit(props)  {
             source_id:'000011112222444',
 
         },{headers: {
-         Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ',
+         Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhY2NvdW50cy5kcmJ5cm9uLmlvIiwiZXhwIjoxNjA5ODg3MTA1LCJwcm9mIjoiRHIuIEJ5cm9uIiwidGVhbSI6InRlYW0tOSJ9.sTGbBBhTTGubq9DxYEDaarLNymvZPU03bXfZ2aEJm1Q',
          }})
             .then(res => {
             console.log(res.data);
-            axios.post(`https://localhost:8080/createLog/`,
+            axios.post(`http://localhost:8080/createLog`,
             {
                 transactionType:"deposit",
                 customerID: props.customer.customerID,
                 account1:data.to_acc,
-                dollarAmount:Number(data.amt)
+                account2:"",
+                amount:Number(data.amt),
+                newBalance: Number(res.data.new_balance)
 
             })
+            props.history.push({pathname: '/dashboard'});
+
 
         })
-
-        /*axios.post(`http://localhost:8080/v1/account/`,
-               {
-                   amount: data.start_balance
-                   account_id: data.to_acc
-                   source_id:
-               })
-                   .then(res => {
-                   console.log(res.data);
-                   //setNewAccount(res.data);
-               })*/
 
 
     }

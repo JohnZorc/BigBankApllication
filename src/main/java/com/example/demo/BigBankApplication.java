@@ -53,18 +53,6 @@ public class BigBankApplication
 		SpringApplication.run(BigBankApplication.class, args);
 	}
 
-//	@Bean
-//	public WebMvcConfigurer corsConfigurer() {
-//		return new WebMvcConfigurer() {
-//			@Override
-//			public void addCorsMappings(CorsRegistry registry) {
-//
-//				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
-//
-//			}
-//		};
-//	}
-
 	// Setting up DB
 	ConnectionString connectionString = new ConnectionString("mongodb://myUserAdmin:pp29softTest@34.69.40.211:27017/");
 	CodecRegistry pojoCodecRegistry = fromRegistries(
@@ -90,6 +78,7 @@ public class BigBankApplication
 
 	MongoCollection<Customer> customers = database.getCollection("customers", Customer.class);
 	MongoCollection<Log> BAMLogs = database2.getCollection("logs", Log.class);
+//	MongoCollection<Log> BAMLogs = database2.getCollection("newLogs", Log.class);
 	//JWT Ticket setup
 	String JWTSecret = "cis4930-group9-jtw-secret";
 	// Build an HMAC signer using a SHA-256 hash
@@ -321,17 +310,40 @@ public class BigBankApplication
 	// the customer ID (not email), account numbers impacted, and any dollar amount recorded for the transaction.
 
 	@PostMapping("/createLog")
-	public void LogBAMS(@RequestBody String logInfo) {
+	public void createLog(@RequestBody String logInfo) {
+		// System.out.println("hit create log");
+
+		String formattedLog = "";
+
 		final JSONObject obj = new JSONObject(logInfo);
 
-		String timestamp = new Timestamp(System.currentTimeMillis()).toString();
+		 String timestamp = new Timestamp(System.currentTimeMillis()).toString();
 		String transactionType = obj.getString("transactionType");
 		String customerID = obj.getString("customerID");
 		String account1 = obj.getString("account1");
 		String account2 = obj.getString("account2");
-		double dollarAmount = obj.getDouble("dollarAmount");
+		double amount = obj.getDouble("amount");
+		double newBalance = obj.getDouble("newBalance");
 
-		Log newLog = new Log(timestamp, transactionType, customerID, account1, account2, dollarAmount);
+		if(transactionType.equals("deposit")){
+			formattedLog = "TimeStamp: " + timestamp + ", transactionType: " + transactionType + ", customerID: " + customerID + ", account: " + account1
+            + ", amount: $" + amount + ", New Balance: $"+newBalance;
+		}
+
+		if(transactionType.equals("transfer")){
+			formattedLog = "TimeStamp: " + timestamp + ", transactionType: " + transactionType + ", customerID: " + customerID + ", account1: " + account1
+            + ", account2: " + account2 + ", amount: $" + amount;
+		}
+
+		if(transactionType.equals("create_account")){
+			formattedLog = "TimeStamp: " + timestamp + ", transactionType: " + transactionType + ", customerID: " + customerID + ", account: " + account1
+            + ", Balance: $" + amount;
+		}
+
+		Log newLog = new Log(formattedLog,transactionType,customerID,account1,account1,amount);
+
+		System.out.println(newLog.toString());
+
 		BAMLogs.insertOne(newLog);
 	}
 

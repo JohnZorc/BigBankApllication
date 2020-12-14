@@ -16,19 +16,23 @@ export default function TransferFunds(props)  {
         .then(res => {
             if(res.data==="You do not have access to access this page."){
                 props.history.replace({pathname: '/login'});
+            }else{
+
+                axios.get(`https://accounts.drbyron.io/v1/accounts/${props.customer.customerID}`,
+                {
+                    headers:
+                {
+                    'Content-Type':'application/json',
+                    'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhY2NvdW50cy5kcmJ5cm9uLmlvIiwiZXhwIjoxNjA5ODg3MTA1LCJwcm9mIjoiRHIuIEJ5cm9uIiwidGVhbSI6InRlYW0tOSJ9.sTGbBBhTTGubq9DxYEDaarLNymvZPU03bXfZ2aEJm1Q'
+                }})
+                .then(res => {
+                    //console.log(res.data);
+                    setAccounts(res.data);
+                })
+
             }
         })
 
-            axios.get(`https://staging.drbyron.io/v1/accounts/${props.customer.customerID}`,
-            {headers:
-            {
-                'Content-Type':'application/json',
-                'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
-            }})
-            .then(res => {
-                //console.log(res.data);
-                setAccounts(res.data);
-            })
     });
 
     const { register, errors, handleSubmit } = useForm({
@@ -37,7 +41,7 @@ export default function TransferFunds(props)  {
 
     const onSubmit = async (data) => {
          console.log(data.from_acc);
-         axios.post(`https://staging.drbyron.io/v1/account/transfer`,
+         axios.post(`https://accounts.drbyron.io/v1/account/transfer`,
          {
 
              from_account:data.from_acc,
@@ -45,32 +49,23 @@ export default function TransferFunds(props)  {
              amount:Number(data.amt),
 
          },{headers: {
-          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhY2NvdW50cy5kcmJ5cm9uLmlvIiwiZXhwIjoxNjA5ODg3MTA1LCJwcm9mIjoiRHIuIEJ5cm9uIiwidGVhbSI6InRlYW0tOSJ9.sTGbBBhTTGubq9DxYEDaarLNymvZPU03bXfZ2aEJm1Q',
           }})
              .then(res => {
-             axios.post(`https://localhost:8080/createLog/`,
-             {
-                 transactionType:"transfer",
-                 customerID:props.customer.customerID,
-                 account1:data.from_acc,
-                 account2:data.to_acc,
-                 dollarAmount:Number(data.amt)
+                axios.post(`http://localhost:8080/createLog`,
+                {
+                    transactionType:"transfer",
+                    customerID: props.customer.customerID,
+                    account1:data.from_acc,
+                    account2:data.to_acc,
+                    amount:Number(data.amt),
+                    newBalance:Number(0)
+    
+                })
 
-             })
+                props.history.push({pathname: '/dashboard'});
+
          })
-
-         /*axios.post(`https://staging.drbyron.io/v1/account/transfer`,
-         {
-             headers: {
-             'Accept': 'application/json',
-             'Content-Type': 'application/json',
-             'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdGFnaW5nLmRyYnlyb24uaW8iLCJleHAiOjE2MDkzOTA3OTIsInByb2YiOiJEci4gQnlyb24iLCJ0ZWFtIjoidGVhbS05In0.fjSJFcPKrzrXnNH89Wn_vvcI5GiRLoghzeYsk9OUHGQ'
-             },
-             from_account: data.from_acc,
-             to_account: data.to_acc,
-             amount:data.amt
-
-         })*/
 
 
     }
